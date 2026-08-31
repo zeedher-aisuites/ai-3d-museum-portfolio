@@ -17,7 +17,7 @@ export function FallbackCollection({ onSelect }: { onSelect: (selection: Selecti
       <Collection title="Image Gallery" items={images} onSelect={(item) => onSelect({ type: 'artwork', item })} />
       <Collection title="Moving Room" items={videos} onSelect={(item) => onSelect({ type: 'video', item })} />
       <Collection title="Creative AI Lab" items={tutorials} onSelect={(item) => onSelect({ type: 'resource', item })} />
-      <Collection title="Commercial Showroom" items={showroom} onSelect={(item) => onSelect({ type: 'showroom', item })} />
+      <Collection title="Hospitality / Showroom" items={showroom} onSelect={(item) => onSelect({ type: 'showroom', item })} />
       <footer className="fallback-contact">
         <p className="eyebrow">CONTACT</p>
         <h2>{site.contact.headline}</h2>
@@ -37,7 +37,7 @@ function Collection<T extends Selectable>({ title, items, onSelect }: { title: s
       <div className="fallback-grid">
         {items.map((item) => (
           <button key={item.id} className="fallback-card" onClick={() => onSelect(item)}>
-            <span>{'category' in item ? item.category : `${item.status} / ${item.sector}`}</span>
+            <span>{'category' in item ? item.category : `${item.index} / ${item.collectionLabel} / ${item.status}`}</span>
             <strong>{item.title}</strong>
             <small>{'project' in item ? item.project : 'summary' in item ? item.summary : item.description}</small>
           </button>

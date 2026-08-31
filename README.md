@@ -62,14 +62,38 @@ Add an entry to `src/content/tutorials.ts`. Choose a `type` (`workflow`, `breakd
 
 ## Adding a Showroom POC
 
-Showroom metadata lives exclusively in `src/content/showroom.ts`; the V3 release contains exactly three POCs. Each entry describes the commercial objective, applications, deliverables, scale and hero media.
+Showroom metadata lives exclusively in `src/content/showroom.ts`. Collections and projects are independent data records, so Hospitality is not hardcoded into the scene or player components.
 
-1. Put a 16:9 poster in `public/portfolio/showroom/` and set `hero.thumbnail` to its public-relative path.
-2. Add or edit one record in `src/content/showroom.ts`. Keep `status` visibly truthful: `POC`, `CONCEPT`, or `DEMO`.
-3. When the 20-second master is ready, place the optimized MP4 in `public/portfolio/videos/` and add `videoUrl: 'portfolio/videos/my-hero-film.mp4'` inside `hero`. Or add the real YouTube ID as `youtubeId`.
-4. Keep the 16:9 master as the source. Vertical, square, social and web variants are downstream deliverables, not the initial asset.
+1. Add collection metadata to `showroomCollections` if it does not already exist.
+2. Put an optimized 16:9 poster in `public/portfolio/showroom/<collection>/concept-<index>/thumbnail.webp` and set `hero.thumbnail` to that public-relative path.
+3. Add a data record with `collection`, `index`, `conceptLine`, `territories`, `capabilities`, `applications`, `status`, and the real media reference.
+4. Use `youtubeId` for a YouTube-hosted film. The player mounts only after an explicit selection and unmounts when the overlay closes or the visitor moves to another concept.
 
-The showroom screen, detail overlay and fallback collection update automatically. There is no component work required to replace a placeholder with a real film.
+The showroom screen, detail overlay, previous/next navigation, mobile list and fallback collection update automatically. There is no component work required to replace a poster with a real YouTube film.
+
+## Hospitality Showroom Series
+
+The first Showroom collection is **Hospitality**: _Three creative directions. One production system._ It is a series of speculative ATELIER POCs, not client commissions.
+
+| Index | Title | YouTube ID |
+| --- | --- | --- |
+| `001` | Brand Experience | `9pNYF_Eyk1Y` |
+| `002` | The Night Moves | `wNpkoSjUNOk` |
+| `003` | Inside the Invitation | `cZgG3cKVMCI` |
+
+YouTube hosts the actual streams. GitHub hosts the site, metadata, optimized WebP posters and interface only. Never commit the original Hospitality MP4 masters to this repository.
+
+### Add Hospitality Concept 004
+
+1. Create `public/portfolio/showroom/hospitality/concept-004/thumbnail.webp`.
+2. Add one `ShowroomProject` to `showroom` with `collection: 'hospitality'`, `index: '004'`, its real YouTube ID and truthful `ATELIER POC` status.
+3. Keep `featured: false` until a future fourth physical installation is intentionally added; this avoids overcrowding the current three-screen room while the overlay and fallback can still use the metadata.
+
+### Add a future Real Estate collection
+
+1. Add `{ id: 'real-estate', label: 'Real Estate', subtitle: '...' }` to `showroomCollections`.
+2. Add real project records using `collection: 'real-estate'`, local posters and genuine video references.
+3. Choose which three `featured` projects deserve the current physical showroom screens. No core scene, modal, lazy-player or fallback component needs to be rewritten.
 
 ## Showroom vs Portfolio
 

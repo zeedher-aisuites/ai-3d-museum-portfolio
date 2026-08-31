@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" role="img" aria-labelledby="title desc">
+  <title id="title">Hospitality POC in development</title><desc id="desc">An abstract warm amber screen study for a hospitality brand experience.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" x2="1" y1="0" y2="1"><stop stop-color="#17110e"/><stop offset=".56" stop-color="#4a2419"/><stop offset="1" stop-color="#120f0d"/></linearGradient>
+    <linearGradient id="glow" x1="0" x2="1"><stop stop-color="#e7b274" stop-opacity="0"/><stop offset=".48" stop-color="#f4c17e"/><stop offset="1" stop-color="#e7b274" stop-opacity="0"/></linearGradient>
+    <filter id="blur"><feGaussianBlur stdDeviation="24"/></filter>
+  </defs>
+  <rect width="1600" height="900" fill="url(#bg)"/>
+  <rect x="92" y="85" width="1416" height="730" fill="none" stroke="#f0c48a" stroke-opacity=".34"/>
+  <path d="M330 814V235c0-72 58-130 130-130h104c72 0 130 58 130 130v579M1037 814V235c0-72 58-130 130-130h104c72 0 130 58 130 130v579" fill="none" stroke="#d8915c" stroke-width="3"/>
+  <path d="M72 556H1528" stroke="url(#glow)" stroke-width="5" filter="url(#blur)"/>
+  <path d="M72 556H1528" stroke="#f3c383" stroke-opacity=".78"/>
+  <text x="126" y="160" fill="#f6dfbe" font-family="Arial, sans-serif" font-size="22" letter-spacing="8">ATELIER / SHOWROOM</text>
+  <text x="126" y="676" fill="#fff1df" font-family="Georgia, serif" font-size="86">HOSPITALITY</text>
+  <text x="130" y="721" fill="#e6bf91" font-family="Arial, sans-serif" font-size="21" letter-spacing="5">BRAND EXPERIENCE / POC</text>
+  <text x="1260" y="760" fill="#f6d8b1" font-family="Arial, sans-serif" font-size="19" letter-spacing="4">IN DEVELOPMENT</text>
+</svg>

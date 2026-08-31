@@ -1,5 +1,5 @@
-import { experimental } from '../content/experimental'
 import { images } from '../content/images'
+import { showroom } from '../content/showroom'
 import { site } from '../content/site'
 import type { Selection } from '../content/types'
 import { tutorials } from '../content/tutorials'
@@ -17,7 +17,7 @@ export function FallbackCollection({ onSelect }: { onSelect: (selection: Selecti
       <Collection title="Image Gallery" items={images} onSelect={(item) => onSelect({ type: 'artwork', item })} />
       <Collection title="Moving Room" items={videos} onSelect={(item) => onSelect({ type: 'video', item })} />
       <Collection title="Creative AI Lab" items={tutorials} onSelect={(item) => onSelect({ type: 'resource', item })} />
-      <Collection title="Experimental Gallery" items={experimental} onSelect={(item) => onSelect({ type: 'artwork', item })} />
+      <Collection title="Commercial Showroom" items={showroom} onSelect={(item) => onSelect({ type: 'showroom', item })} />
       <footer className="fallback-contact">
         <p className="eyebrow">CONTACT</p>
         <h2>{site.contact.headline}</h2>
@@ -27,7 +27,7 @@ export function FallbackCollection({ onSelect }: { onSelect: (selection: Selecti
   )
 }
 
-type Selectable = typeof images[number] | typeof videos[number] | typeof tutorials[number]
+type Selectable = typeof images[number] | typeof videos[number] | typeof tutorials[number] | typeof showroom[number]
 
 function Collection<T extends Selectable>({ title, items, onSelect }: { title: string; items: T[]; onSelect: (item: T) => void }) {
   return (
@@ -37,9 +37,9 @@ function Collection<T extends Selectable>({ title, items, onSelect }: { title: s
       <div className="fallback-grid">
         {items.map((item) => (
           <button key={item.id} className="fallback-card" onClick={() => onSelect(item)}>
-            <span>{item.category}</span>
+            <span>{'category' in item ? item.category : `${item.status} / ${item.sector}`}</span>
             <strong>{item.title}</strong>
-            <small>{'project' in item ? item.project : item.description}</small>
+            <small>{'project' in item ? item.project : 'summary' in item ? item.summary : item.description}</small>
           </button>
         ))}
       </div>

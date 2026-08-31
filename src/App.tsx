@@ -114,6 +114,14 @@ function App() {
         </label>
       </div>
       <div className="museum-hint"><span>Scroll</span><span>or use ← →</span></div>
+      {room.id === 'contact' && (
+        <aside className="contact-actions" aria-label="Collaboration routes">
+          {site.contact.routes.map((route) => (
+            <a key={route.label} href={`mailto:${site.contact.email}?subject=${encodeURIComponent(route.subject)}`}>{route.label}</a>
+          ))}
+          {site.contact.isPlaceholder && <small>Replace contact details in src/content/site.ts</small>}
+        </aside>
+      )}
       {debug && <aside className="debug-panel">DEBUG<br />WAYPOINT: {room.id}<br />QUALITY: {quality}<br />ROOM: {roomIndex + 1}/{rooms.length}</aside>}
       <CollectionModal selection={selection} onClose={() => setSelection(null)} />
       <LoadingScreen progress={progress} visible={loading} />

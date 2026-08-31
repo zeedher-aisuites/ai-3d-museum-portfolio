@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" role="img" aria-labelledby="title desc">
+  <title id="title">Real estate and luxury retail POC in development</title><desc id="desc">An abstract limestone architecture screen study for a property brand experience.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" x2="1"><stop stop-color="#201d17"/><stop offset=".48" stop-color="#887359"/><stop offset="1" stop-color="#151410"/></linearGradient>
+    <linearGradient id="stone" x1="0" x2="0" y1="0" y2="1"><stop stop-color="#d8c59e"/><stop offset="1" stop-color="#645849"/></linearGradient>
+  </defs>
+  <rect width="1600" height="900" fill="url(#bg)"/>
+  <path d="M0 737 355 505 614 669 913 328 1600 617V900H0Z" fill="#12110e" fill-opacity=".54"/>
+  <rect x="823" y="126" width="386" height="631" rx="194" fill="url(#stone)"/>
+  <rect x="882" y="190" width="268" height="567" rx="134" fill="#191714"/>
+  <path d="M1040 194V747M920 474H1160" stroke="#c5af83" stroke-opacity=".45" stroke-width="2"/>
+  <rect x="92" y="85" width="1416" height="730" fill="none" stroke="#e8d0a4" stroke-opacity=".36"/>
+  <text x="126" y="160" fill="#f2dfbd" font-family="Arial, sans-serif" font-size="22" letter-spacing="8">ATELIER / SHOWROOM</text>
+  <text x="126" y="675" fill="#fff1dc" font-family="Georgia, serif" font-size="76">REAL ESTATE</text>
+  <text x="130" y="720" fill="#e2c696" font-family="Arial, sans-serif" font-size="20" letter-spacing="4">PROPERTY + LUXURY RETAIL / POC</text>
+  <text x="1222" y="760" fill="#f1d9ae" font-family="Arial, sans-serif" font-size="19" letter-spacing="4">IN DEVELOPMENT</text>
+</svg>

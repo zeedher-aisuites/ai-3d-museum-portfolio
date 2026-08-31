@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" role="img" aria-labelledby="title desc">
+  <title id="title">Enterprise technology POC in development</title><desc id="desc">An abstract dark teal screen study for an enterprise technology brand experience.</desc>
+  <defs>
+    <radialGradient id="bg" cx="70%" cy="35%"><stop stop-color="#285952"/><stop offset=".48" stop-color="#142725"/><stop offset="1" stop-color="#0c1111"/></radialGradient>
+    <linearGradient id="beam" x1="0" x2="1"><stop stop-color="#9bd9c8" stop-opacity="0"/><stop offset=".5" stop-color="#9bd9c8"/><stop offset="1" stop-color="#9bd9c8" stop-opacity="0"/></linearGradient>
+  </defs>
+  <rect width="1600" height="900" fill="url(#bg)"/>
+  <g fill="none" stroke="#8fc2b4" stroke-opacity=".24"><path d="M0 171H1600M0 337H1600M0 503H1600M0 669H1600"/><path d="M216 0V900M493 0V900M770 0V900M1047 0V900M1324 0V900"/></g>
+  <path d="M-40 637 577 253 909 491 1640 103" stroke="url(#beam)" stroke-width="14"/>
+  <path d="M-40 637 577 253 909 491 1640 103" stroke="#a5dccd" stroke-opacity=".78" stroke-width="2"/>
+  <rect x="92" y="85" width="1416" height="730" fill="none" stroke="#b2e5d5" stroke-opacity=".3"/>
+  <text x="126" y="160" fill="#d4f0e7" font-family="Arial, sans-serif" font-size="22" letter-spacing="8">ATELIER / SHOWROOM</text>
+  <text x="126" y="675" fill="#e9fff7" font-family="Georgia, serif" font-size="73">ENTERPRISE TECH</text>
+  <text x="130" y="720" fill="#b7d9ce" font-family="Arial, sans-serif" font-size="20" letter-spacing="4">BRAND EXPERIENCE / POC</text>
+  <text x="1218" y="760" fill="#d2eee4" font-family="Arial, sans-serif" font-size="19" letter-spacing="4">IN DEVELOPMENT</text>
+</svg>

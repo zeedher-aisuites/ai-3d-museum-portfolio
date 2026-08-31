@@ -35,6 +35,10 @@ a { color: inherit; }
 .museum-hint { position: absolute; z-index: 3; bottom: 2.15rem; left: 50%; display: grid; gap: .18rem; transform: translateX(-50%); color: #c9beb0; text-align: center; text-transform: uppercase; font: .52rem/1.15 'DM Mono', monospace; letter-spacing: .16em; pointer-events: none; }
 .museum-hint span:first-child::after { content: ''; display: block; width: 1px; height: 1.35rem; margin: .55rem auto 0; background: #b48a5e; animation: hint 1.65s ease-in-out infinite; }
 .debug-panel { position: absolute; z-index: 4; right: 1rem; top: 8rem; padding: .6rem .7rem; background: rgba(8,8,8,.8); border: 1px solid #82664b; color: #e8d9c7; font: .58rem/1.6 'DM Mono', monospace; letter-spacing: .06em; }
+.contact-actions { position: absolute; z-index: 3; left: 50%; bottom: 5.9rem; display: flex; flex-wrap: wrap; justify-content: center; gap: .45rem; width: min(38rem, calc(100% - 3rem)); transform: translateX(-50%); }
+.contact-actions a { padding: .66rem .72rem; border: 1px solid rgba(226, 209, 187, .33); background: rgba(17, 16, 14, .52); color: #ede3d5; font: .54rem/1 'DM Mono', monospace; letter-spacing: .08em; text-decoration: none; text-transform: uppercase; backdrop-filter: blur(8px); }
+.contact-actions a:hover, .contact-actions a:focus-visible { border-color: #d3a673; background: #30261d; outline: 0; }
+.contact-actions small { flex-basis: 100%; color: #baa48c; text-align: center; font: .5rem/1.3 'DM Mono', monospace; letter-spacing: .08em; text-transform: uppercase; }
 
 .loading-screen { position: fixed; z-index: 20; inset: 0; display: grid; place-items: center; background: #0b0b0a; }
 .loading-screen > div { width: min(23rem, calc(100% - 3rem)); }
@@ -47,7 +51,7 @@ a { color: inherit; }
 .modal-backdrop { position: fixed; z-index: 12; inset: 0; display: grid; place-items: center; padding: 1rem; background: rgba(7, 7, 6, .72); backdrop-filter: blur(12px); }
 .collection-modal { position: relative; display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(17rem, .8fr); width: min(62rem, 100%); max-height: min(42rem, calc(100svh - 2rem)); overflow: auto; background: #171614; border: 1px solid rgba(226, 209, 187, .22); box-shadow: 0 2rem 6rem rgba(0,0,0,.45); user-select: text; }
 .modal-visual { min-height: 25rem; overflow: hidden; background: #28221d; }
-.modal-visual img, .modal-visual iframe { display: block; width: 100%; height: 100%; min-height: 25rem; border: 0; object-fit: cover; }
+.modal-visual img, .modal-visual iframe, .modal-visual video { display: block; width: 100%; height: 100%; min-height: 25rem; border: 0; object-fit: cover; }
 .artwork-visual { border-bottom: .32rem solid var(--accent); }
 .modal-copy { align-self: center; padding: clamp(2rem, 4vw, 4rem) clamp(1.8rem, 4vw, 3.5rem); }
 .modal-copy h2 { margin: .65rem 0 .4rem; font: 500 clamp(2.15rem, 4vw, 3.4rem)/.96 'Playfair Display', Georgia, serif; letter-spacing: -.035em; }
@@ -57,6 +61,15 @@ a { color: inherit; }
 .modal-close:hover { background: #b78c5d; }
 .tool-list { display: flex; flex-wrap: wrap; gap: .42rem; margin-top: 1.7rem; }
 .tool-list span { padding: .38rem .45rem; border: 1px solid #49433c; color: #d7cfc4; font: .55rem/1 'DM Mono', monospace; letter-spacing: .07em; }
+.tool-list i { padding: .38rem .45rem; border: 1px solid #49433c; color: #d7cfc4; font: normal .55rem/1 'DM Mono', monospace; letter-spacing: .07em; text-transform: uppercase; }
+.modal-note { margin-top: 1.6rem; color: #d0a577 !important; font: .6rem/1.55 'DM Mono', monospace; letter-spacing: .08em; text-transform: uppercase; }
+.showroom-copy { align-self: start; }
+.showroom-detail { margin-top: 1.45rem; padding-top: 1rem; border-top: 1px solid #39342e; }
+.showroom-detail > span { display: block; margin-bottom: .65rem; color: #c79a69; font: .56rem/1 'DM Mono', monospace; letter-spacing: .13em; text-transform: uppercase; }
+.showroom-detail > p { margin: 0; color: #c4bbb0; font-size: .84rem; line-height: 1.55; }
+.showroom-detail ul { display: grid; gap: .42rem; margin: 0; padding: 0; list-style: none; }
+.showroom-detail li { display: flex; justify-content: space-between; gap: 1rem; color: #e3dace; font: .66rem/1.3 'DM Mono', monospace; letter-spacing: .05em; text-transform: uppercase; }
+.showroom-detail em { color: #a9a096; font-style: normal; }
 .resource-copy { grid-column: 1 / -1; min-height: 22rem; max-width: 44rem; }
 .resource-button, .text-link { display: inline-block; margin-top: 1.7rem; padding: .78rem 1rem; border: 1px solid #c89b69; color: #f1e3d1; text-decoration: none; font: .64rem/1 'DM Mono', monospace; text-transform: uppercase; letter-spacing: .1em; }
 .resource-button:hover, .text-link:hover { background: #c89b69; color: #17130f; }
@@ -98,8 +111,10 @@ a { color: inherit; }
   .museum-actions label { padding: .48rem .6rem; }
   .museum-hint { display: none; }
   .collection-modal { grid-template-columns: 1fr; width: min(31rem, 100%); }
-  .modal-visual, .modal-visual img, .modal-visual iframe { min-height: 13rem; height: 13rem; }
+  .modal-visual, .modal-visual img, .modal-visual iframe, .modal-visual video { min-height: 13rem; height: 13rem; }
   .modal-copy { padding: 1.7rem 1.5rem 2rem; }
   .resource-copy { min-height: 18rem; }
+  .contact-actions { bottom: 7.2rem; width: calc(100% - 2.3rem); gap: .35rem; }
+  .contact-actions a { padding: .55rem .5rem; font-size: .48rem; }
 }
 @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; scroll-behavior: auto !important; } }

@@ -35,10 +35,9 @@ function App() {
   const room = rooms[roomIndex]
 
   useEffect(() => {
-    const first = window.setTimeout(() => setProgress(68), 280)
-    const second = window.setTimeout(() => setProgress(100), 640)
-    const finish = window.setTimeout(() => setLoading(false), 930)
-    return () => { window.clearTimeout(first); window.clearTimeout(second); window.clearTimeout(finish) }
+    const first = window.setTimeout(() => setProgress(52), 260)
+    const second = window.setTimeout(() => setProgress(78), 650)
+    return () => { window.clearTimeout(first); window.clearTimeout(second) }
   }, [])
 
   useEffect(() => {
@@ -84,7 +83,10 @@ function App() {
       }}
     >
       <Suspense fallback={null}>
-        <MuseumExperience roomIndex={roomIndex} pointer={pointer} quality={quality} reducedMotion={reducedMotion} onSelect={setSelection} />
+        <MuseumExperience roomIndex={roomIndex} pointer={pointer} quality={quality} reducedMotion={reducedMotion} onSelect={setSelection} onEnvironmentReady={() => {
+          setProgress(100)
+          window.setTimeout(() => setLoading(false), 260)
+        }} />
       </Suspense>
       <header className="museum-header">
         <button className="brand" onClick={() => setRoomIndex(0)} aria-label="Return to museum lobby">

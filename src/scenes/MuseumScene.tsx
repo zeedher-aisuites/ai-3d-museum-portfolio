@@ -1,34 +1,43 @@
-import { Float, RoundedBox, Text } from '@react-three/drei'
+import { Float, RoundedBox, Text, useTexture } from '@react-three/drei'
 import { useFrame } from '@react-three/fiber'
-import { useMemo, useRef } from 'react'
+import { Component, useMemo, useRef, type ReactNode } from 'react'
 import type { BufferGeometry, Mesh, MeshBasicMaterial } from 'three'
-import { Vector3 } from 'three'
+import { Color, SRGBColorSpace, Vector3 } from 'three'
 import { experimental } from '../content/experimental'
 import { images } from '../content/images'
 import { site } from '../content/site'
-import type { Artwork, Resource, Selection, Video } from '../content/types'
+import { assetUrl, type Artwork, type Resource, type Selection, type Video } from '../content/types'
 import { tutorials } from '../content/tutorials'
 import { videos } from '../content/videos'
 import type { Quality } from '../utils/quality'
+import { anchorPosition, type AnchorName } from './anchors'
+import { MuseumEnvironment, ProceduralArchitecture } from './MuseumEnvironment'
 
 type MuseumSceneProps = {
   roomIndex: number
   pointer: [number, number]
   reducedMotion: boolean
   quality: Quality
+  environment: 'glb' | 'procedural'
   onSelect: (selection: Selection) => void
 }
 
 type CameraWaypoint = { position: [number, number, number]; target: [number, number, number] }
 
 const cameraWaypoints: CameraWaypoint[] = [
-  { position: [0, 2.25, 17.5], target: [0, 2.15, 8] },
-  { position: [0, 2.25, 3.5], target: [0, 2.05, -4] },
-  { position: [0, 2.25, -13.2], target: [0, 2.1, -19.4] },
-  { position: [0, 2.25, -28.2], target: [0, 2.05, -34.4] },
-  { position: [0, 2.25, -43.2], target: [0, 2.1, -49.4] },
-  { position: [0, 2.2, -58], target: [0, 2.05, -63] },
+  { position: [0, 1.72, 17.1], target: [0, 2.65, 8.1] },
+  { position: [0, 1.7, 3.75], target: [0, 2.55, -4.65] },
+  { position: [0, 1.7, -12.95], target: [0, 2.65, -19.4] },
+  { position: [0, 1.7, -28.0], target: [0, 2.45, -34.45] },
+  { position: [0, 1.7, -43.05], target: [0, 2.6, -49.5] },
+  { position: [0, 1.68, -58.35], target: [0, 2.65, -64.2] },
 ]
+
+const imageAnchors: AnchorName[] = ['Room01_WallA_01', 'Room01_WallA_02', 'Room01_WallA_03', 'Room01_WallA_04']
+const videoAnchors: AnchorName[] = ['Room02_Screen_01', 'Room02_Screen_02', 'Room02_Screen_03']
+const labAnchors: AnchorName[] = ['Lab_Terminal_01', 'Lab_Terminal_02', 'Lab_Terminal_03', 'Lab_Terminal_04']
+const experimentalAnchors: AnchorName[] = ['Room04_WallA_01', 'Room04_WallA_02', 'Room04_WallA_03']
+const galleryAmbient = new Color('#d9cfbf')
 
 function CameraRig({ roomIndex, pointer, reducedMotion }: Pick<MuseumSceneProps, 'roomIndex' | 'pointer' | 'reducedMotion'>) {
   const destination = cameraWaypoints[roomIndex]
@@ -38,97 +47,106 @@ function CameraRig({ roomIndex, pointer, reducedMotion }: Pick<MuseumSceneProps,
   useFrame(({ camera }, delta) => {
     wantedPosition.set(...destination.position)
     target.set(...destination.target)
-    const drift = reducedMotion ? 0 : 0.42
+    const drift = reducedMotion ? 0 : 0.2
     wantedPosition.x += pointer[0] * drift
-    wantedPosition.y += pointer[1] * drift * 0.35
-    target.x += pointer[0] * drift * 0.65
-    target.y += pointer[1] * drift * 0.22
-    const damping = reducedMotion ? 10 : 3.4
+    wantedPosition.y += pointer[1] * drift * 0.22
+    target.x += pointer[0] * drift * 0.75
+    target.y += pointer[1] * drift * 0.38
+    const damping = reducedMotion ? 8 : 2.35
     camera.position.lerp(wantedPosition, 1 - Math.exp(-damping * delta))
     camera.lookAt(target)
   })
   return null
 }
 
-function RoomShell({ center, name, dark = false }: { center: number; name: string; dark?: boolean }) {
-  const wall = dark ? '#171717' : '#272522'
-  const floor = dark ? '#10100f' : '#191817'
+class EnvironmentBoundary extends Component<{ fallback: ReactNode; children: ReactNode }, { failed: boolean }> {
+  state = { failed: false }
+
+  static getDerivedStateFromError() {
+    return { failed: true }
+  }
+
+  render() {
+    return this.state.failed ? this.props.fallback : this.props.children
+  }
+}
+
+function RoomShell({ center, dark = false }: { center: number; dark?: boolean }) {
+  const wall = dark ? '#171716' : '#d5cec3'
+  const floor = dark ? '#121211' : '#4d4841'
   return (
     <group>
-      <mesh position={[0, -0.08, center]} receiveShadow>
-        <boxGeometry args={[14, 0.16, 13.2]} />
-        <meshStandardMaterial color={floor} roughness={0.88} metalness={0.08} />
-      </mesh>
-      <mesh position={[-7, 3, center]} castShadow receiveShadow>
-        <boxGeometry args={[0.2, 6, 13.2]} />
-        <meshStandardMaterial color={wall} roughness={0.92} />
-      </mesh>
-      <mesh position={[7, 3, center]} castShadow receiveShadow>
-        <boxGeometry args={[0.2, 6, 13.2]} />
-        <meshStandardMaterial color={wall} roughness={0.92} />
-      </mesh>
-      <mesh position={[0, 6, center]}>
-        <boxGeometry args={[14, 0.12, 13.2]} />
-        <meshStandardMaterial color="#161513" roughness={1} />
-      </mesh>
-      <Text position={[-6.45, 1.2, center + 5.7]} rotation={[0, Math.PI / 2, 0]} fontSize={0.13} color="#8f887d" anchorX="center" letterSpacing={0.12}>
-        {name.toUpperCase()}
-      </Text>
+      <mesh position={[0, -0.08, center]} receiveShadow><boxGeometry args={[18.6, 0.16, 13.2]} /><meshStandardMaterial color={floor} roughness={0.82} metalness={0.1} /></mesh>
+      <mesh position={[-9.3, 4, center]} receiveShadow><boxGeometry args={[0.2, 8, 13.2]} /><meshStandardMaterial color={wall} roughness={0.9} /></mesh>
+      <mesh position={[9.3, 4, center]} receiveShadow><boxGeometry args={[0.2, 8, 13.2]} /><meshStandardMaterial color={wall} roughness={0.9} /></mesh>
+      <mesh position={[0, 7.95, center]}><boxGeometry args={[18.6, 0.16, 13.2]} /><meshStandardMaterial color="#24221f" roughness={0.95} /></mesh>
+    </group>
+  )
+}
+
+function LegacyProceduralMuseum() {
+  return (
+    <group name="LEGACY_PROCEDURAL_MUSEUM">
+      <ProceduralArchitecture />
+      <RoomShell center={10.8} />
+      <RoomShell center={-5} />
+      <RoomShell center={-20} dark />
+      <RoomShell center={-35} />
+      <RoomShell center={-50} dark />
+      <RoomShell center={-62} dark />
+      {[-5, -20, -35, -50, -62].flatMap((z) => [
+        <Column key={`${z}-left`} position={[-7.72, 3.8, z + 5.5]} />,
+        <Column key={`${z}-right`} position={[7.72, 3.8, z + 5.5]} />,
+      ])}
     </group>
   )
 }
 
 function Column({ position }: { position: [number, number, number] }) {
   return (
-    <mesh position={position} castShadow receiveShadow>
-      <cylinderGeometry args={[0.22, 0.26, 6, 16]} />
-      <meshStandardMaterial color="#3c3934" roughness={0.62} metalness={0.38} />
-    </mesh>
-  )
-}
-
-function Frame({ item, position, onSelect, inset = 0 }: { item: Artwork; position: [number, number, number]; onSelect: () => void; inset?: number }) {
-  const portrait = item.orientation === 'portrait'
-  const square = item.orientation === 'square'
-  const width = portrait ? 2.15 : square ? 2.65 : 3.65
-  const height = portrait ? 3.35 : square ? 2.65 : 2.2
-  const frame = 0.12
-  return (
-    <group position={position} onClick={(event) => { event.stopPropagation(); onSelect() }}>
-      <RoundedBox args={[width + frame * 2, height + frame * 2, 0.15]} radius={0.05} smoothness={2} castShadow>
-        <meshStandardMaterial color="#0c0c0b" roughness={0.4} metalness={0.58} />
-      </RoundedBox>
-      <mesh position={[0, 0, 0.09 + inset]}>
-        <planeGeometry args={[width, height]} />
-        <meshBasicMaterial color={item.accent} />
-      </mesh>
-      <mesh position={[0, 0.08, 0.105 + inset]}>
-        <circleGeometry args={[Math.min(width, height) * 0.255, 40]} />
-        <meshBasicMaterial color="#171716" />
-      </mesh>
-      <mesh position={[0, -height * 0.23, 0.106 + inset]}>
-        <planeGeometry args={[width * 0.62, 0.035]} />
-        <meshBasicMaterial color="#f1e9dc" transparent opacity={0.75} />
-      </mesh>
-      <Text position={[0, -height / 2 - 0.28, 0.14]} maxWidth={width + 0.2} fontSize={0.16} color="#ede7dc" anchorX="center" anchorY="middle">
-        {item.title.toUpperCase()}
-      </Text>
-      <Text position={[0, -height / 2 - 0.52, 0.14]} maxWidth={width + 0.2} fontSize={0.1} color="#a7a096" anchorX="center" anchorY="middle" letterSpacing={0.08}>
-        {item.category.toUpperCase()}
-      </Text>
+    <group position={position}>
+      <mesh castShadow receiveShadow><cylinderGeometry args={[0.3, 0.38, 7.2, 20]} /><meshStandardMaterial color="#c5b9a6" roughness={0.72} /></mesh>
+      <mesh position={[0, -3.53, 0]}><cylinderGeometry args={[0.5, 0.56, 0.18, 20]} /><meshStandardMaterial color="#211f1b" roughness={0.56} metalness={0.25} /></mesh>
+      <mesh position={[0, 3.57, 0]}><boxGeometry args={[1.06, 0.16, 1.06]} /><meshStandardMaterial color="#c5b9a6" roughness={0.72} /></mesh>
     </group>
   )
 }
 
-function ArtworkRoom({ center, items, onSelect, dark }: { center: number; items: Artwork[]; onSelect: (item: Artwork) => void; dark?: boolean }) {
-  const xPositions = items.length === 4 ? [-4.5, -1.5, 1.5, 4.5] : [-3.7, 0, 3.7]
+function ArtworkTexture({ image, width, height }: { image: string; width: number; height: number }) {
+  const texture = useTexture(assetUrl(image))
+  texture.colorSpace = SRGBColorSpace
+  return <mesh position={[0, 0, 0.115]}><planeGeometry args={[width, height]} /><meshBasicMaterial map={texture} toneMapped={false} /></mesh>
+}
+
+function Frame({ item, position, onSelect }: { item: Artwork; position: [number, number, number]; onSelect: () => void }) {
+  const portrait = item.orientation === 'portrait'
+  const square = item.orientation === 'square'
+  const width = portrait ? 2.25 : square ? 2.85 : 3.78
+  const height = portrait ? 3.55 : square ? 2.85 : 2.25
+  const frame = portrait ? 0.14 : 0.13
+  const usesImageTexture = item.image.endsWith('.png') || item.image.endsWith('.jpg') || item.image.endsWith('.webp')
+  return (
+    <group position={position} onClick={(event) => { event.stopPropagation(); onSelect() }}>
+      <RoundedBox args={[width + frame * 2, height + frame * 2, 0.18]} radius={0.045} smoothness={2} castShadow><meshStandardMaterial color="#171614" roughness={0.32} metalness={0.68} /></RoundedBox>
+      {usesImageTexture ? <ArtworkTexture image={item.image} width={width} height={height} /> : (
+        <>
+          <mesh position={[0, 0, 0.11]}><planeGeometry args={[width, height]} /><meshStandardMaterial color={item.accent} roughness={0.82} /></mesh>
+          <mesh position={[0, 0.08, 0.115]}><circleGeometry args={[Math.min(width, height) * 0.25, 36]} /><meshBasicMaterial color="#151514" /></mesh>
+          <mesh position={[0, -height * 0.23, 0.117]}><planeGeometry args={[width * 0.62, 0.035]} /><meshBasicMaterial color="#f1e9dc" transparent opacity={0.72} /></mesh>
+        </>
+      )}
+      <mesh position={[0, 0, -0.08]}><boxGeometry args={[width + 0.05, height + 0.05, 0.08]} /><meshStandardMaterial color="#0d0c0b" roughness={0.92} /></mesh>
+      <Text position={[0, -height / 2 - 0.32, 0.14]} maxWidth={width + 0.3} fontSize={0.15} color="#f2ece2" anchorX="center" anchorY="middle">{item.title.toUpperCase()}</Text>
+      <Text position={[0, -height / 2 - 0.56, 0.14]} maxWidth={width + 0.3} fontSize={0.095} color="#a9a095" anchorX="center" anchorY="middle" letterSpacing={0.09}>{item.category.toUpperCase()}</Text>
+    </group>
+  )
+}
+
+function ArtworkRoom({ items, anchors, onSelect, dark = false }: { items: Artwork[]; anchors: AnchorName[]; onSelect: (item: Artwork) => void; dark?: boolean }) {
   return (
     <group>
-      <RoomShell center={center} name={dark ? 'Experimental Gallery' : 'Image Gallery'} dark={dark} />
-      {items.map((item, index) => <Frame key={item.id} item={item} position={[xPositions[index], 3.05, center - 6.25]} inset={0.02} onSelect={() => onSelect(item)} />)}
-      <Text position={[0, 5.3, center - 6.2]} fontSize={0.16} color="#c7bfb2" letterSpacing={0.17} anchorX="center">
-        {dark ? 'VISUAL STUDIES / 2025—26' : 'SELECTED IMAGE WORK / 2025—26'}
-      </Text>
+      {items.map((item, index) => <Frame key={item.id} item={item} position={anchorPosition(anchors[index])} onSelect={() => onSelect(item)} />)}
+      <Text position={[0, 6.65, dark ? -55.75 : -10.75]} fontSize={0.13} color={dark ? '#d5b578' : '#766d60'} letterSpacing={0.18} anchorX="center">{dark ? 'EXPERIMENTAL INSTALLATIONS / 2025—26' : 'SELECTED IMAGE WORK / 2025—26'}</Text>
     </group>
   )
 }
@@ -136,158 +154,84 @@ function ArtworkRoom({ center, items, onSelect, dark }: { center: number; items:
 function VideoScreen({ item, position, onSelect }: { item: Video; position: [number, number, number]; onSelect: () => void }) {
   return (
     <group position={position} onClick={(event) => { event.stopPropagation(); onSelect() }}>
-      <RoundedBox args={[3.5, 2.35, 0.18]} radius={0.08} smoothness={3} castShadow>
-        <meshStandardMaterial color="#101111" roughness={0.35} metalness={0.55} />
-      </RoundedBox>
-      <mesh position={[0, 0, 0.105]}>
-        <planeGeometry args={[3.22, 1.82]} />
-        <meshStandardMaterial color="#292e2e" emissive="#77a69c" emissiveIntensity={0.12} roughness={0.7} />
-      </mesh>
-      <mesh position={[0, 0, 0.116]}>
-        <circleGeometry args={[0.28, 32]} />
-        <meshBasicMaterial color="#e6dac8" />
-      </mesh>
-      <Text position={[0.06, 0, 0.13]} fontSize={0.17} color="#111211" anchorX="center" anchorY="middle">▶</Text>
-      <Text position={[0, -1.38, 0.13]} maxWidth={3.8} fontSize={0.16} color="#eee6db" anchorX="center">{item.title.toUpperCase()}</Text>
-      <Text position={[0, -1.63, 0.13]} maxWidth={3.8} fontSize={0.1} color="#aaa49b" anchorX="center" letterSpacing={0.08}>{item.category.toUpperCase()}</Text>
+      <RoundedBox args={[4.5, 2.78, 0.22]} radius={0.06} smoothness={2} castShadow><meshStandardMaterial color="#090a09" roughness={0.28} metalness={0.7} /></RoundedBox>
+      <mesh position={[0, 0, 0.13]}><planeGeometry args={[4.18, 2.27]} /><meshStandardMaterial color="#253735" emissive="#507f74" emissiveIntensity={0.28} roughness={0.65} /></mesh>
+      <mesh position={[0, 0, 0.145]}><circleGeometry args={[0.3, 32]} /><meshBasicMaterial color="#ebe1d2" /></mesh>
+      <Text position={[0.06, 0, 0.15]} fontSize={0.18} color="#151613" anchorX="center" anchorY="middle">▶</Text>
+      <Text position={[0, -1.64, 0.15]} maxWidth={4.8} fontSize={0.15} color="#f0e8dd" anchorX="center">{item.title.toUpperCase()}</Text>
+      <Text position={[0, -1.88, 0.15]} maxWidth={4.8} fontSize={0.09} color="#aaa39a" anchorX="center" letterSpacing={0.08}>{item.category.toUpperCase()}</Text>
     </group>
   )
 }
 
 function FilmRoom({ onSelect }: { onSelect: (item: Video) => void }) {
-  return (
-    <group>
-      <RoomShell center={-20} name="Moving Image" dark />
-      {videos.map((item, index) => <VideoScreen key={item.id} item={item} position={[-4.25 + index * 4.25, 3.1, -26.15]} onSelect={() => onSelect(item)} />)}
-      <Text position={[0, 5.25, -26.12]} fontSize={0.16} color="#d7c7aa" letterSpacing={0.17} anchorX="center">MOTION / SELECTED WORK</Text>
-    </group>
-  )
+  return <group>{videos.map((item, index) => <VideoScreen key={item.id} item={item} position={anchorPosition(videoAnchors[index])} onSelect={() => onSelect(item)} />)}<Text position={[0, 6.65, -25.75]} fontSize={0.13} color="#c9b082" letterSpacing={0.18} anchorX="center">MOVING IMAGE / SELECTED WORK</Text></group>
 }
 
 function Terminal({ item, position, onSelect }: { item: Resource; position: [number, number, number]; onSelect: () => void }) {
   return (
     <group position={position} onClick={(event) => { event.stopPropagation(); onSelect() }}>
-      <RoundedBox args={[2.65, 1.76, 0.12]} radius={0.05} smoothness={2} castShadow>
-        <meshStandardMaterial color="#191c1b" roughness={0.38} metalness={0.52} />
-      </RoundedBox>
-      <mesh position={[0, 0, 0.075]}>
-        <planeGeometry args={[2.35, 1.47]} />
-        <meshStandardMaterial color="#26312d" emissive="#89c4a8" emissiveIntensity={0.14} />
-      </mesh>
-      <Text position={[-0.95, 0.48, 0.09]} maxWidth={2} fontSize={0.1} color="#9dceaf" anchorX="left" letterSpacing={0.08}>AI LAB / {item.category.toUpperCase()}</Text>
-      <Text position={[-0.95, 0.1, 0.09]} maxWidth={1.9} fontSize={0.19} color="#ece6dc" anchorX="left">{item.title}</Text>
-      <Text position={[-0.95, -0.48, 0.09]} maxWidth={2} fontSize={0.1} color="#b0b7ae" anchorX="left">OPEN RESOURCE →</Text>
-      <mesh position={[0, -1.02, -0.22]} castShadow>
-        <boxGeometry args={[2.3, 0.18, 1.15]} />
-        <meshStandardMaterial color="#33342f" roughness={0.85} />
-      </mesh>
+      <RoundedBox args={[3.25, 1.82, 0.14]} radius={0.045} smoothness={2} castShadow><meshStandardMaterial color="#1d211f" roughness={0.36} metalness={0.48} /></RoundedBox>
+      <mesh position={[0, 0, 0.085]}><planeGeometry args={[2.96, 1.52]} /><meshStandardMaterial color="#263a35" emissive="#599178" emissiveIntensity={0.17} roughness={0.58} /></mesh>
+      <Text position={[-1.2, 0.48, 0.1]} maxWidth={2.4} fontSize={0.09} color="#a7d3b8" anchorX="left" letterSpacing={0.07}>AI LAB / {item.category.toUpperCase()}</Text>
+      <Text position={[-1.2, 0.1, 0.1]} maxWidth={2.32} fontSize={0.18} color="#efe9df" anchorX="left">{item.title}</Text>
+      <Text position={[-1.2, -0.5, 0.1]} maxWidth={2.3} fontSize={0.09} color="#b9c3bb" anchorX="left">OPEN RESOURCE →</Text>
+      <mesh position={[0, -1.03, -0.3]} castShadow><boxGeometry args={[2.85, 0.17, 1.3]} /><meshStandardMaterial color="#33342f" roughness={0.82} /></mesh>
     </group>
   )
 }
 
 function LabRoom({ onSelect }: { onSelect: (item: Resource) => void }) {
-  return (
-    <group>
-      <RoomShell center={-35} name="Creative AI Laboratory" />
-      {tutorials.map((item, index) => <Terminal key={item.id} item={item} position={[-3.4 + (index % 2) * 6.8, index < 2 ? 3.75 : 1.45, -41.15]} onSelect={() => onSelect(item)} />)}
-      <Text position={[0, 5.22, -41.12]} fontSize={0.16} color="#c9cdbc" letterSpacing={0.17} anchorX="center">CREATIVE AI LAB / OPEN TERMINALS</Text>
-    </group>
-  )
+  return <group>{tutorials.map((item, index) => <Terminal key={item.id} item={item} position={anchorPosition(labAnchors[index])} onSelect={() => onSelect(item)} />)}<Text position={[0, 6.65, -40.75]} fontSize={0.13} color="#a8c8b4" letterSpacing={0.18} anchorX="center">CREATIVE AI LAB / OPEN TERMINALS</Text></group>
 }
 
 function Lobby() {
   return (
     <group>
-      <RoomShell center={10.8} name="Arrival" />
-      <Text position={[0, 3.45, 4.23]} fontSize={1.02} color="#f1ebdf" anchorX="center" letterSpacing={0.08}>{site.name}</Text>
-      <Text position={[0, 2.35, 4.23]} fontSize={0.2} color="#c9a77d" anchorX="center" letterSpacing={0.38}>AI MUSEUM / 2026</Text>
-      <Text position={[0, 1.55, 4.23]} maxWidth={5.6} textAlign="center" fontSize={0.18} lineHeight={1.45} color="#b8b0a3" anchorX="center">{site.intro}</Text>
-      <Text position={[0, 0.64, 4.23]} fontSize={0.12} color="#e5d7c6" anchorX="center" letterSpacing={0.18}>SCROLL TO BEGIN</Text>
-      <Float speed={1.6} rotationIntensity={0.08} floatIntensity={0.16}>
-        <mesh position={[0, 2.75, 7]} rotation={[0.15, 0.4, 0]} castShadow>
-          <icosahedronGeometry args={[0.95, 2]} />
-          <meshStandardMaterial color="#b99465" roughness={0.25} metalness={0.82} />
-        </mesh>
-      </Float>
+      <Float speed={1.1} rotationIntensity={0.025} floatIntensity={0.08}><mesh position={[0, 2.75, 8.15]} rotation={[0.12, 0.32, 0]} castShadow><icosahedronGeometry args={[1.05, 3]} /><meshStandardMaterial color="#3c3025" roughness={0.28} metalness={0.84} /></mesh></Float>
+      <Text position={[0, 5.45, 6.7]} fontSize={0.52} color="#f1ebe2" anchorX="center" letterSpacing={0.18}>{site.name}</Text>
+      <Text position={[0, 4.78, 6.7]} fontSize={0.12} color="#c69d6d" anchorX="center" letterSpacing={0.3}>AI MUSEUM / 2026</Text>
+      <Text position={[0, 1.08, 6.7]} fontSize={0.1} color="#e7d8c5" anchorX="center" letterSpacing={0.16}>SCROLL TO BEGIN</Text>
     </group>
   )
 }
 
 function ContactRoom() {
-  return (
-    <group>
-      <RoomShell center={-62} name="Contact" dark />
-      <mesh position={[0, 2.7, -67.95]} castShadow>
-        <boxGeometry args={[10.7, 4, 0.2]} />
-        <meshStandardMaterial color="#24201c" roughness={0.77} />
-      </mesh>
-      <Text position={[0, 4.1, -67.82]} fontSize={0.13} color="#c4a275" anchorX="center" letterSpacing={0.25}>FIN / BEGINNING</Text>
-      <Text position={[0, 3.05, -67.82]} maxWidth={9.4} textAlign="center" fontSize={0.58} color="#f1ebe1" anchorX="center">{site.contact.headline}</Text>
-      <Text position={[0, 1.9, -67.82]} fontSize={0.2} color="#c3b6a7" anchorX="center">{site.contact.email}</Text>
-      <Text position={[0, 1.37, -67.82]} fontSize={0.13} color="#b7ab9d" anchorX="center" letterSpacing={0.13}>INSTAGRAM  /  LINKEDIN</Text>
-    </group>
-  )
-}
-
-function Corridor() {
-  const lines = Array.from({ length: 11 }, (_, index) => 3 - index * 7.35)
-  return (
-    <group>
-      <mesh position={[0, -0.16, -25.5]} receiveShadow>
-        <boxGeometry args={[5.8, 0.12, 88]} />
-        <meshStandardMaterial color="#141311" roughness={0.92} />
-      </mesh>
-      {lines.map((z) => (
-        <mesh key={z} position={[0, 0.02, z]}>
-          <boxGeometry args={[0.06, 0.025, 3.5]} />
-          <meshBasicMaterial color="#9d805d" transparent opacity={0.42} />
-        </mesh>
-      ))}
-    </group>
-  )
+  return <group><Text position={[0, 5.8, -68.04]} fontSize={0.12} color="#c3a172" anchorX="center" letterSpacing={0.26}>FIN / BEGINNING</Text><Text position={[0, 4.25, -68.04]} maxWidth={12} textAlign="center" fontSize={0.7} color="#f3ece2" anchorX="center">{site.contact.headline}</Text><Text position={[0, 2.45, -68.04]} fontSize={0.19} color="#cabdae" anchorX="center">{site.contact.email}</Text><Text position={[0, 1.82, -68.04]} fontSize={0.11} color="#b9ac9d" anchorX="center" letterSpacing={0.14}>INSTAGRAM  /  LINKEDIN</Text></group>
 }
 
 function AnimatedLight({ position, color }: { position: [number, number, number]; color: string }) {
   const ref = useRef<Mesh<BufferGeometry, MeshBasicMaterial>>(null)
-  useFrame(({ clock }) => {
-    if (ref.current) ref.current.material.opacity = 0.28 + Math.sin(clock.elapsedTime * 1.2 + position[2]) * 0.05
-  })
-  return (
-    <mesh ref={ref} position={position}>
-      <sphereGeometry args={[0.08, 12, 12]} />
-      <meshBasicMaterial color={color} transparent opacity={0.3} />
-    </mesh>
-  )
+  useFrame(({ clock }) => { if (ref.current) ref.current.material.opacity = 0.25 + Math.sin(clock.elapsedTime * 0.8 + position[2]) * 0.04 })
+  return <mesh ref={ref} position={position}><sphereGeometry args={[0.07, 12, 12]} /><meshBasicMaterial color={color} transparent opacity={0.28} /></mesh>
 }
 
-export function MuseumScene({ roomIndex, pointer, reducedMotion, quality, onSelect }: MuseumSceneProps) {
-  const useShadows = quality !== 'low'
+export function MuseumScene({ roomIndex, pointer, reducedMotion, quality, environment, onSelect }: MuseumSceneProps) {
+  const useShadows = quality === 'high'
+  const architecture = environment === 'glb' ? <EnvironmentBoundary fallback={<LegacyProceduralMuseum />}><MuseumEnvironment quality={quality} /></EnvironmentBoundary> : <LegacyProceduralMuseum />
   return (
     <>
-      <color attach="background" args={['#0b0b0a']} />
-      <fog attach="fog" args={['#0b0b0a', 15, 55]} />
-      <ambientLight intensity={0.52} color="#d8c3a7" />
-      <hemisphereLight args={['#d9d1c4', '#151412', 0.6]} />
-      <directionalLight position={[4, 8, 12]} intensity={1.25} color="#ffe6c2" castShadow={useShadows} shadow-mapSize={[1024, 1024]} />
-      <spotLight position={[0, 5.5, 5]} intensity={18} angle={0.56} penumbra={0.9} distance={13} color="#f5d2a4" />
-      <spotLight position={[0, 5.5, -9]} intensity={12} angle={0.6} penumbra={1} distance={13} color="#ecd9bc" />
-      <spotLight position={[0, 5.5, -24]} intensity={11} angle={0.6} penumbra={1} distance={13} color="#caeadc" />
-      <spotLight position={[0, 5.5, -40]} intensity={12} angle={0.6} penumbra={1} distance={13} color="#f2d4b1" />
+      <color attach="background" args={['#11100e']} />
+      <fog attach="fog" args={['#11100e', 11, quality === 'low' ? 34 : 52]} />
+      <ambientLight intensity={0.28} color={galleryAmbient} />
+      <hemisphereLight args={['#e2d6c4', '#1a1815', 0.55]} />
+      <directionalLight position={[5, 12, 13]} intensity={0.8} color="#ffe6c4" castShadow={useShadows} shadow-mapSize={[1024, 1024]} />
+      <spotLight position={[0, 7.6, 10]} intensity={13} angle={0.42} penumbra={0.95} distance={17} color="#f5d9b6" castShadow={useShadows} />
+      <spotLight position={[-2, 7.3, -5]} intensity={10} angle={0.47} penumbra={1} distance={15} color="#f6dfc0" />
+      <spotLight position={[0, 7.2, -20]} intensity={8} angle={0.5} penumbra={1} distance={15} color="#8ab7aa" />
+      <spotLight position={[0, 7.2, -35]} intensity={8} angle={0.5} penumbra={1} distance={15} color="#ecd7b9" />
+      <spotLight position={[0, 7.2, -50]} intensity={8} angle={0.5} penumbra={1} distance={15} color="#d09a83" />
       <CameraRig roomIndex={roomIndex} pointer={pointer} reducedMotion={reducedMotion} />
-      <Corridor />
+      {architecture}
       <Lobby />
-      <ArtworkRoom center={-5} items={images} onSelect={(item) => onSelect({ type: 'artwork', item })} />
+      <ArtworkRoom items={images} anchors={imageAnchors} onSelect={(item) => onSelect({ type: 'artwork', item })} />
       <FilmRoom onSelect={(item) => onSelect({ type: 'video', item })} />
       <LabRoom onSelect={(item) => onSelect({ type: 'resource', item })} />
-      <ArtworkRoom center={-50} items={experimental} onSelect={(item) => onSelect({ type: 'artwork', item })} dark />
+      <ArtworkRoom items={experimental} anchors={experimentalAnchors} onSelect={(item) => onSelect({ type: 'artwork', item })} dark />
       <ContactRoom />
-      {[-5, -20, -35, -50, -62].flatMap((z) => [
-        <Column key={`${z}-left`} position={[-6.55, 3, z + 5.5]} />,
-        <Column key={`${z}-right`} position={[6.55, 3, z + 5.5]} />,
-      ])}
-      <AnimatedLight position={[-2.6, 4.85, -5.5]} color="#f0bf8d" />
-      <AnimatedLight position={[2.6, 4.85, -20.5]} color="#a5d2bd" />
-      <AnimatedLight position={[0, 4.85, -50.5]} color="#cf7095" />
+      <AnimatedLight position={[-4.3, 6.7, -10.2]} color="#efca9d" />
+      <AnimatedLight position={[0, 6.7, -25.2]} color="#86c6ad" />
+      <AnimatedLight position={[4.3, 6.7, -55.2]} color="#d09088" />
     </>
   )
 }

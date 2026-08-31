@@ -1,6 +1,21 @@
-# ATELIER / AI Museum
+# ATELIER / AI-FIRST CREATIVE STUDIO
 
-A static-first, interactive 3D portfolio built with React, Vite, Three.js, React Three Fiber, Drei, and Framer Motion. It is designed to run on GitHub Pages with no database, authentication, tracking, or paid infrastructure.
+ATELIER is a static-first, interactive 3D portfolio and commercial showroom built with React, Vite, Three.js, React Three Fiber, Drei, and Framer Motion. It is designed for GitHub Pages with no database, authentication, tracking, backend, or paid infrastructure.
+
+## Atelier Architecture
+
+The six rooms are one continuous commercial story:
+
+| Moment | Purpose |
+| --- | --- |
+| `00 / ARRIVAL` | Who we are — studio positioning. |
+| `01 / IMAGE` | Finished visual work for campaigns, products and spaces. |
+| `02 / MOTION` | Finished moving image. |
+| `03 / AI LAB` | How we build: production systems, workflows and infrastructure. |
+| `04 / SHOWROOM` | What we could build for a business: concepts, prototypes and POCs. |
+| `05 / CONTACT` | Start a collaboration. |
+
+The 3D scene is only the presentation layer. Content remains data-driven and can change without editing camera, scroll, GLB, or interaction code.
 
 ## Run locally
 
@@ -20,32 +35,50 @@ npm run preview
 
 ## Content management
 
-All portfolio content is deliberately separate from the 3D scene.
-
 | Content | Data file | Asset folder |
 | --- | --- | --- |
-| Image gallery | `src/content/images.ts` | `public/portfolio/images/` |
-| Experimental gallery | `src/content/experimental.ts` | `public/portfolio/images/` |
-| Videos | `src/content/videos.ts` | `public/portfolio/thumbnails/` |
-| Tutorials / links | `src/content/tutorials.ts` | n/a |
-| Name, introduction, contact, social URLs | `src/content/site.ts` | n/a |
+| Image portfolio | `src/content/images.ts` | `public/portfolio/images/` |
+| Motion portfolio | `src/content/videos.ts` | `public/portfolio/thumbnails/`, `public/portfolio/videos/` |
+| Creative AI Lab systems | `src/content/tutorials.ts` | n/a |
+| Commercial showroom POCs | `src/content/showroom.ts` | `public/portfolio/showroom/`, `public/portfolio/videos/` |
+| Studio identity, contact and CTAs | `src/content/site.ts` | n/a |
 
-### Add an image or experimental project
+### Add an image portfolio project
 
-1. Add an optimized `.webp`, `.avif`, `.jpg`, or `.svg` to `public/portfolio/images/`.
-2. Add an entry in `src/content/images.ts` or `src/content/experimental.ts`. Use the public-relative path, for example `portfolio/images/my-project.webp`.
-3. Set its orientation (`landscape`, `portrait`, or `square`) and the modal metadata. The room and fallback view generate automatically.
+1. Add an optimized `.webp`, `.avif`, `.jpg`, `.png`, or `.svg` to `public/portfolio/images/`.
+2. Add its metadata to `src/content/images.ts`, including `category`, optional `sector`, `status`, tools and `orientation`.
+3. Use a public-relative asset path, for example `portfolio/images/my-project.webp`. The image room and fallback collection update automatically.
 
-### Add a video
+### Add a moving-image project
 
 1. Add a lightweight poster to `public/portfolio/thumbnails/`.
-2. Add a record in `src/content/videos.ts` with either `youtubeId`, `externalUrl`, or both.
+2. Add metadata to `src/content/videos.ts`. Use `thumbnail`, optional `youtubeId` or `videoUrl`, and optional `duration`.
 
-YouTube only loads its iframe after a visitor opens the item. For a normal YouTube URL, copy the ID after `v=` (or the final part of a `youtu.be/` URL) into `youtubeId`. Vimeo or any other host can use `externalUrl` now; add its embed format to `CollectionModal.tsx` when needed.
+No player is loaded until a visitor opens the project modal. A YouTube iframe, or a native `videoUrl`, mounts only inside that modal.
 
-### Add a tutorial or workflow
+### Add an AI Lab system
 
-Add an entry in `src/content/tutorials.ts`. External links are opened with `target="_blank"` and `rel="noreferrer"`.
+Add an entry to `src/content/tutorials.ts`. Choose a `type` (`workflow`, `breakdown`, `tutorial`, `tool`, or `system`) and use `status: 'coming-soon'` whenever there is no genuine public URL. Do not add placeholder links.
+
+## Adding a Showroom POC
+
+Showroom metadata lives exclusively in `src/content/showroom.ts`; the V3 release contains exactly three POCs. Each entry describes the commercial objective, applications, deliverables, scale and hero media.
+
+1. Put a 16:9 poster in `public/portfolio/showroom/` and set `hero.thumbnail` to its public-relative path.
+2. Add or edit one record in `src/content/showroom.ts`. Keep `status` visibly truthful: `POC`, `CONCEPT`, or `DEMO`.
+3. When the 20-second master is ready, place the optimized MP4 in `public/portfolio/videos/` and add `videoUrl: 'portfolio/videos/my-hero-film.mp4'` inside `hero`. Or add the real YouTube ID as `youtubeId`.
+4. Keep the 16:9 master as the source. Vertical, square, social and web variants are downstream deliverables, not the initial asset.
+
+The showroom screen, detail overlay and fallback collection update automatically. There is no component work required to replace a placeholder with a real film.
+
+## Showroom vs Portfolio
+
+- **SHOWROOM** = concepts, prototypes and sales demonstrations. They are clearly marked and must not imply a completed client commission.
+- **PORTFOLIO** = finished visual or moving-image work. A successful POC can later be represented in Image or Motion as final work without changing the showroom architecture.
+
+## Contact configuration
+
+Edit `src/content/site.ts` to set the real `email`, social URLs and collaboration routes. The committed `studio@example.com` value is an explicit temporary placeholder; replace it before production outreach.
 
 ## 3D Environment Pipeline
 
@@ -106,11 +139,12 @@ The workflow at `.github/workflows/deploy-pages.yml` deploys only pushes to `mai
 
 ## Branches and releases
 
-Use `main` for stable production, `develop` for integration, and `feature/*` branches for work. Recommended release tag for this MVP: `v0.1.0` — **3D AI Museum Portfolio — MVP**.
+Use `main` for stable production, `develop` for integration, and `feature/*` branches for work. V3 showroom work is developed on `feature/atelier-v3-showroom` before merging through `develop` to `main`.
 
 ## Current limitations
 
-- Demo artwork and posters are lightweight SVG placeholders; replace them with your own optimized assets before launch.
+- The three showroom POCs are intentional in-development placeholders. They have no final 20-second films yet; replace their `hero` media in `src/content/showroom.ts` when the masters are ready.
+- `studio@example.com` is a clearly marked temporary contact configuration. Replace it in `src/content/site.ts` before using the site for outreach.
 - The “Enable sound” control is preparatory; no audio file is included or autoplayed.
 - The GLB environment is active and a procedural architecture fallback remains available when the file cannot load.
 - The current GLB intentionally uses material-first architecture rather than photo textures; a future Blender replacement can add optimized CC0 PBR textures after measuring payload and mobile performance.

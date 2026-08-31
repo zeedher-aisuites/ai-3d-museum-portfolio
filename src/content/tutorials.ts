@@ -1,8 +1,8 @@
 import type { Resource } from './types'
 
 export const tutorials: Resource[] = [
-  { id: 'prompt-to-campaign', title: 'Prompt to campaign', description: 'A practical framework for turning a loose visual idea into an AI-assisted campaign system.', category: 'Workflow', url: 'https://www.youtube.com/', cta: 'Open resource' },
-  { id: 'consistent-characters', title: 'Consistent characters', description: 'A compact breakdown of reference, styling, iteration, and select shots.', category: 'Breakdown', url: 'https://www.youtube.com/', cta: 'Open resource' },
-  { id: 'motion-first', title: 'Motion-first prompting', description: 'Thinking in transitions, camera language, and cuts before generating a first frame.', category: 'Tutorial', url: 'https://www.youtube.com/', cta: 'Open resource' },
-  { id: 'toolkit-2026', title: 'Creative AI toolkit', description: 'The current stack behind a fast and considered image-to-motion workflow.', category: 'Tools', url: 'https://www.openai.com/', cta: 'Open resource' },
+  { id: 'campaign-image-system', title: 'Campaign image system', summary: 'Reference, art direction, generation and finishing arranged as one repeatable image pipeline.', category: 'Image Pipeline', type: 'system', status: 'coming-soon', featured: true },
+  { id: 'moving-image-pipeline', title: 'Moving image pipeline', summary: 'A screen-first approach to concepts, shot design, image-to-video and final edit.', category: 'Motion Pipeline', type: 'workflow', status: 'coming-soon', featured: true },
+  { id: 'character-continuity', title: 'Character continuity', summary: 'A system for visual identity, reference control and consistent talent across a campaign world.', category: 'Production System', type: 'system', status: 'coming-soon' },
+  { id: 'creative-automation', title: 'Creative automation', summary: 'Reusable production logic for variations, account adaptation and controlled content scale.', category: 'Automation', type: 'system', status: 'coming-soon' },
 ]

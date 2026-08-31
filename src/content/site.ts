@@ -2,13 +2,19 @@ import type { RoomId } from './types'
 
 export const site = {
   name: 'ATELIER',
-  descriptor: 'AI MUSEUM',
-  intro: 'A curated collection of artificial imagination, visual systems, and moving stories.',
+  descriptor: 'AI-FIRST CREATIVE STUDIO',
+  intro: 'Creative systems, moving image and visual experiences for modern brands.',
   contact: {
-    headline: 'Let’s make the next impossible thing.',
-    email: 'hello@yourstudio.com',
-    instagram: 'https://instagram.com/',
-    linkedin: 'https://linkedin.com/',
+    headline: 'Open for collaboration.',
+    email: 'studio@example.com',
+    instagram: '',
+    linkedin: '',
+    isPlaceholder: true,
+    routes: [
+      { label: 'Create a campaign', subject: 'Create a campaign' },
+      { label: 'Build a content system', subject: 'Build a content system' },
+      { label: 'Explore a POC', subject: 'Explore a POC' },
+    ],
   },
 }
 
@@ -20,10 +26,10 @@ export type Room = {
 }
 
 export const rooms: Room[] = [
-  { id: 'lobby', eyebrow: '00 / ARRIVAL', title: 'ATELIER', subtitle: 'A digital museum for artificial imagination.' },
-  { id: 'gallery', eyebrow: '01 / IMAGE GALLERY', title: 'The Image Room', subtitle: 'Campaign worlds, fashion, and cinematic stills.' },
-  { id: 'films', eyebrow: '02 / MOTION', title: 'The Moving Room', subtitle: 'Commercials, reels, and narrative experiments.' },
-  { id: 'lab', eyebrow: '03 / AI LAB', title: 'Creative AI Laboratory', subtitle: 'Processes, tools, and ideas made visible.' },
-  { id: 'experiments', eyebrow: '04 / EXPERIMENTS', title: 'The Afterimage', subtitle: 'Editorial systems and visual provocations.' },
-  { id: 'contact', eyebrow: '05 / CONTACT', title: 'Open for collaboration', subtitle: 'A final room for the next conversation.' },
+  { id: 'lobby', eyebrow: '00 / ARRIVAL', title: 'ATELIER', subtitle: 'Creative systems, moving image and visual experiences for modern brands.' },
+  { id: 'gallery', eyebrow: '01 / IMAGE', title: 'The Image Room', subtitle: 'Finished visual work for campaigns, products and spaces.' },
+  { id: 'films', eyebrow: '02 / MOTION', title: 'The Moving Room', subtitle: 'Finished moving image for commercial and cultural contexts.' },
+  { id: 'lab', eyebrow: '03 / AI LAB', title: 'Creative AI Laboratory', subtitle: 'Production systems, workflows and creative infrastructure.' },
+  { id: 'showroom', eyebrow: '04 / SHOWROOM', title: 'The Afterimage', subtitle: 'Concepts, prototypes and possibilities.' },
+  { id: 'contact', eyebrow: '05 / CONTACT', title: 'Open for collaboration', subtitle: 'Start a conversation about what we could build together.' },
 ]

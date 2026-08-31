@@ -47,9 +47,46 @@ YouTube only loads its iframe after a visitor opens the item. For a normal YouTu
 
 Add an entry in `src/content/tutorials.ts`. External links are opened with `target="_blank"` and `rel="noreferrer"`.
 
-## 3D environment
+## 3D Environment Pipeline
 
-The procedural museum is in `src/scenes/MuseumScene.tsx`; interactive content placements are generated from the data files above. A future Blender asset belongs at `public/models/museum.glb`. See `public/models/README.md` for export guidance. Keep the camera path and content entries independent when replacing geometry.
+Phase 2 uses a production GLB at `public/models/museum.glb` as the preferred architectural shell. It is a 0.75 MB, web-safe model generated from the source script `scripts/generate-museum-glb.mjs`, with no runtime textures or paid assets. The GLB contributes only static architecture: travertine-like walls, portals, columns, floors, display walls, laboratory counter, stairs, and the contact monument.
+
+```
+architecture source / Blender source
+  → cleanup and semantic naming
+  → PBR material consolidation and geometry reduction
+  → GLB export
+  → public/models/museum.glb
+  → useGLTF() in src/scenes/MuseumEnvironment.tsx
+```
+
+`MuseumExperience` first checks for the GLB. If the model is unavailable or fails to parse, `MuseumScene` uses the preserved procedural environment instead. Interactive portfolio content is never baked into the model:
+
+- `src/scenes/anchors.ts` maps semantic art, screen, and terminal anchors.
+- The GLB exports matching empty nodes such as `ANCHOR_Room01_WallA_01`.
+- React continues to create frames, video screens, terminal interactions, overlays, links, and camera navigation.
+
+To regenerate the included model after an architectural edit:
+
+```bash
+node scripts/generate-museum-glb.mjs
+```
+
+For a Blender-authored replacement, preserve the anchor names, use meters, apply transforms, remove hidden or render-only geometry, consolidate PBR materials, keep textures at 512–2048px, and export a single GLB. Check the finished file size before committing; the target is 5–15 MB or less for a textured replacement.
+
+### Asset provenance
+
+No external BlendSwap or Poly Haven file is bundled in this release. The architectural GLB is original project geometry. These CC0 references were researched as optional source material and are documented for future manual work:
+
+| Asset | Creator | Source | License | Used now |
+| --- | --- | --- | --- | --- |
+| Colonnato | lucasassone | https://blendswap.com/blend/11277 | CC0 | Reference only |
+| Modern Home Interior | CianGameDev | https://blendswap.com/blend/18670 | CC0 | Reference only |
+| Interior Room Visualization | MattMump | https://blendswap.com/blend/6437 | CC0 | Reference only |
+| Interior art | Ndakasha | https://blendswap.com/blend/16843 | CC0 | Reference only |
+| Poly Haven assets | Poly Haven contributors | https://polyhaven.com/ | CC0 | Not bundled |
+
+The flagship `midnight-grand-tourer-v2.png` is an original project image generated for this portfolio; it is not an externally downloaded asset.
 
 ## Performance and accessibility
 
@@ -75,4 +112,5 @@ Use `main` for stable production, `develop` for integration, and `feature/*` bra
 
 - Demo artwork and posters are lightweight SVG placeholders; replace them with your own optimized assets before launch.
 - The “Enable sound” control is preparatory; no audio file is included or autoplayed.
-- The procedural museum is the active environment. GLB loading is intentionally documented but not enabled until a real `museum.glb` exists.
+- The GLB environment is active and a procedural architecture fallback remains available when the file cannot load.
+- The current GLB intentionally uses material-first architecture rather than photo textures; a future Blender replacement can add optimized CC0 PBR textures after measuring payload and mobile performance.

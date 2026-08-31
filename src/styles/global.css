@@ -64,12 +64,19 @@ a { color: inherit; }
 .tool-list i { padding: .38rem .45rem; border: 1px solid #49433c; color: #d7cfc4; font: normal .55rem/1 'DM Mono', monospace; letter-spacing: .07em; text-transform: uppercase; }
 .modal-note { margin-top: 1.6rem; color: #d0a577 !important; font: .6rem/1.55 'DM Mono', monospace; letter-spacing: .08em; text-transform: uppercase; }
 .showroom-copy { align-self: start; }
+.showroom-extended { color: #b5aca1 !important; font-size: .82rem !important; }
 .showroom-detail { margin-top: 1.45rem; padding-top: 1rem; border-top: 1px solid #39342e; }
 .showroom-detail > span { display: block; margin-bottom: .65rem; color: #c79a69; font: .56rem/1 'DM Mono', monospace; letter-spacing: .13em; text-transform: uppercase; }
 .showroom-detail > p { margin: 0; color: #c4bbb0; font-size: .84rem; line-height: 1.55; }
 .showroom-detail ul { display: grid; gap: .42rem; margin: 0; padding: 0; list-style: none; }
 .showroom-detail li { display: flex; justify-content: space-between; gap: 1rem; color: #e3dace; font: .66rem/1.3 'DM Mono', monospace; letter-spacing: .05em; text-transform: uppercase; }
 .showroom-detail em { color: #a9a096; font-style: normal; }
+.showroom-modal-actions { display: flex; align-items: center; justify-content: space-between; gap: 1rem; margin-top: 1.8rem; }
+.showroom-modal-actions .text-link { margin-top: 0; }
+.showroom-series-nav { display: flex; gap: .35rem; }
+.showroom-series-nav button { padding: .76rem .52rem; border: 1px solid #49433c; background: transparent; color: #e9dfd1; font: .53rem/1 'DM Mono', monospace; letter-spacing: .08em; text-transform: uppercase; cursor: pointer; }
+.showroom-series-nav button:hover, .showroom-series-nav button:focus-visible { border-color: #c89b69; color: #f3dfc8; outline: 0; }
+.showroom-mobile-list { display: none; }
 .resource-copy { grid-column: 1 / -1; min-height: 22rem; max-width: 44rem; }
 .resource-button, .text-link { display: inline-block; margin-top: 1.7rem; padding: .78rem 1rem; border: 1px solid #c89b69; color: #f1e3d1; text-decoration: none; font: .64rem/1 'DM Mono', monospace; text-transform: uppercase; letter-spacing: .1em; }
 .resource-button:hover, .text-link:hover { background: #c89b69; color: #17130f; }
@@ -114,6 +121,13 @@ a { color: inherit; }
   .modal-visual, .modal-visual img, .modal-visual iframe, .modal-visual video { min-height: 13rem; height: 13rem; }
   .modal-copy { padding: 1.7rem 1.5rem 2rem; }
   .resource-copy { min-height: 18rem; }
+  .showroom-modal-actions { align-items: stretch; flex-direction: column; }
+  .showroom-series-nav { width: 100%; }
+  .showroom-series-nav button { flex: 1; }
+  .showroom-mobile-list { position: absolute; z-index: 3; left: 50%; bottom: 7.25rem; display: grid; grid-template-columns: repeat(3, 1fr); gap: .32rem; width: calc(100% - 2.3rem); transform: translateX(-50%); }
+  .showroom-mobile-list button { min-height: 2.75rem; padding: .48rem .32rem; border: 1px solid rgba(226, 209, 187, .32); background: rgba(17, 16, 14, .62); color: #e8ded2; text-align: left; backdrop-filter: blur(8px); }
+  .showroom-mobile-list b { display: block; color: #d0a46e; font: .5rem/1 'DM Mono', monospace; letter-spacing: .1em; }
+  .showroom-mobile-list span { display: block; margin-top: .28rem; font: .52rem/1.15 'DM Mono', monospace; letter-spacing: .04em; text-transform: uppercase; }
   .contact-actions { bottom: 7.2rem; width: calc(100% - 2.3rem); gap: .35rem; }
   .contact-actions a { padding: .55rem .5rem; font-size: .48rem; }
 }

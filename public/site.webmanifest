@@ -1,0 +1,8 @@
+{
+  "name": "ATELIER / AI Museum",
+  "short_name": "ATELIER",
+  "start_url": ".",
+  "display": "standalone",
+  "background_color": "#0a0a09",
+  "theme_color": "#0a0a09"
+}

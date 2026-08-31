@@ -8,7 +8,7 @@ export const images: Artwork[] = [
     description: 'An AI-native film still imagining a silent luxury launch on the edge of a volcanic coastline.',
     category: 'AI Commercial',
     tools: ['Midjourney', 'ComfyUI', 'DaVinci Resolve'],
-    year: '2026', image: 'portfolio/images/midnight-grand-tourer.svg', accent: '#d4a36d', orientation: 'landscape',
+    year: '2026', image: 'portfolio/images/midnight-grand-tourer-v2.png', accent: '#d4a36d', orientation: 'landscape',
   },
   {
     id: 'soft-power',

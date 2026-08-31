@@ -1,7 +1,15 @@
-# Optional museum model
+# Museum environment model
 
-Place a future architectural replacement here as `museum.glb`.
+`museum.glb` is the active, self-contained architectural shell for the gallery. It is generated from `scripts/generate-museum-glb.mjs` and loaded with Drei `useGLTF()` by `src/scenes/MuseumEnvironment.tsx`.
 
-The current MVP renders `src/scenes/MuseumScene.tsx` procedurally, while artwork, video, lab, and contact interactions remain data-driven. A future `MuseumModel` component can load `/models/museum.glb` alongside the interactive content placements without changing the data files.
+The model must remain architecture-only. Keep content in React: artwork frames, video thumbnails, tutorial terminals, overlays, links, and the camera system are deliberately not baked into the model.
 
-For Blender exports: apply transforms, use meters, keep materials PBR, bake or pack optimized textures, name objects clearly, and remove hidden geometry. Export GLB with optimized geometry; consider Meshopt or Draco only after checking their actual payload benefit.
+## Required semantic nodes
+
+When replacing the model, retain the `ARCH_*` hierarchy where useful and export these empty anchor nodes at their intended display positions:
+
+`ANCHOR_Room01_WallA_01` through `04`, `ANCHOR_Room02_Screen_01` through `03`, `ANCHOR_Lab_Terminal_01` through `04`, and `ANCHOR_Room04_WallA_01` through `03`.
+
+The matching fallback transform data is in `src/scenes/anchors.ts`.
+
+For Blender exports: apply transforms, use meters, keep materials PBR, bake or pack optimized textures, name objects clearly, and remove hidden geometry. Prefer 512–2048px textures and consolidate repeat materials. Export GLB with optimized geometry; consider Meshopt or Draco only after confirming a meaningful payload improvement.

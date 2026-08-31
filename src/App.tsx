@@ -2,6 +2,7 @@ import { lazy, Suspense, useEffect, useRef, useState, type PointerEvent, type Wh
 import { CollectionModal } from './components/CollectionModal'
 import { FallbackCollection } from './components/FallbackCollection'
 import { LoadingScreen } from './components/LoadingScreen'
+import { showroom } from './content/showroom'
 import { rooms, site } from './content/site'
 import type { Selection } from './content/types'
 import { detectQuality, type Quality } from './utils/quality'
@@ -122,8 +123,13 @@ function App() {
           {site.contact.isPlaceholder && <small>Replace contact details in src/content/site.ts</small>}
         </aside>
       )}
+      {room.id === 'showroom' && (
+        <nav className="showroom-mobile-list" aria-label="Hospitality collection">
+          {showroom.map((project) => <button key={project.id} onClick={() => setSelection({ type: 'showroom', item: project })}><b>{project.index}</b><span>{project.title}</span></button>)}
+        </nav>
+      )}
       {debug && <aside className="debug-panel">DEBUG<br />WAYPOINT: {room.id}<br />QUALITY: {quality}<br />ROOM: {roomIndex + 1}/{rooms.length}</aside>}
-      <CollectionModal selection={selection} onClose={() => setSelection(null)} />
+      <CollectionModal selection={selection} onClose={() => setSelection(null)} onNavigateShowroom={(item) => setSelection({ type: 'showroom', item })} />
       <LoadingScreen progress={progress} visible={loading} />
     </main>
   )

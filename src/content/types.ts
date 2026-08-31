@@ -52,10 +52,13 @@ export type Resource = {
 
 export type ShowroomProject = {
   id: string
+  collection: string
+  collectionLabel: string
+  index: string
   title: string
+  conceptLine: string
   sector: string
-  status: 'POC' | 'CONCEPT' | 'DEMO'
-  tagline: string
+  status: 'ATELIER POC' | 'CONCEPT' | 'DEMO'
   hero: {
     type: 'video' | 'image' | 'interactive'
     thumbnail: string
@@ -63,13 +66,20 @@ export type ShowroomProject = {
     videoUrl?: string
     duration?: string
   }
-  objective: string
-  applications: string[]
-  deliverables: { label: string; format?: string }[]
-  scalability: string[]
+  watchUrl?: string
   description: string
+  extendedDescription?: string
+  territories: string[]
+  capabilities: string[]
+  applications: string[]
   featured?: boolean
   accent: string
+}
+
+export type ShowroomCollection = {
+  id: string
+  label: string
+  subtitle: string
 }
 
 export type Selection =

@@ -1,10 +1,10 @@
 import { Float, RoundedBox, Text, useTexture } from '@react-three/drei'
 import { useFrame } from '@react-three/fiber'
-import { Component, useMemo, useRef, type ReactNode } from 'react'
+import { Component, useMemo, useRef, useState, type ReactNode } from 'react'
 import type { BufferGeometry, Mesh, MeshBasicMaterial } from 'three'
 import { Color, SRGBColorSpace, Vector3 } from 'three'
 import { images } from '../content/images'
-import { showroom } from '../content/showroom'
+import { showroom, showroomCollections } from '../content/showroom'
 import { site } from '../content/site'
 import { assetUrl, type Artwork, type Resource, type Selection, type ShowroomProject, type Video } from '../content/types'
 import { tutorials } from '../content/tutorials'
@@ -197,55 +197,39 @@ function Lobby() {
   )
 }
 
-function ShowroomPoster({ item, index, width, height }: { item: ShowroomProject; index: number; width: number; height: number }) {
-  const label = index === 0 ? 'HOSPITALITY' : index === 1 ? 'REAL ESTATE' : 'ENTERPRISE TECH'
-  const base = index === 0 ? '#3a1c16' : index === 1 ? '#5a4b3b' : '#15302d'
-  return (
-    <group position={[0, 0, 0.13]}>
-      <mesh><planeGeometry args={[width, height]} /><meshStandardMaterial color={base} emissive={base} emissiveIntensity={0.22} roughness={0.58} /></mesh>
-      {index === 0 && <>
-        <mesh position={[-width * 0.27, 0.05, 0.02]}><boxGeometry args={[width * 0.12, height * 0.74, 0.05]} /><meshBasicMaterial color="#b76948" /></mesh>
-        <mesh position={[width * 0.04, 0.16, 0.025]}><boxGeometry args={[width * 0.17, height * 0.94, 0.05]} /><meshBasicMaterial color="#e1a767" /></mesh>
-        <mesh position={[width * 0.34, 0.01, 0.02]}><boxGeometry args={[width * 0.08, height * 0.66, 0.05]} /><meshBasicMaterial color="#7d382b" /></mesh>
-        <mesh position={[0, -height * 0.22, 0.04]}><boxGeometry args={[width * 0.78, 0.025, 0.06]} /><meshBasicMaterial color="#f0bd7b" /></mesh>
-      </>}
-      {index === 1 && <>
-        <RoundedBox args={[width * 0.44, height * 0.77, 0.05]} radius={0.42} smoothness={6} position={[width * 0.15, 0.03, 0.02]}><meshBasicMaterial color="#d1b17b" /></RoundedBox>
-        <RoundedBox args={[width * 0.29, height * 0.64, 0.06]} radius={0.29} smoothness={6} position={[width * 0.15, 0.0, 0.055]}><meshBasicMaterial color="#1a1814" /></RoundedBox>
-        <mesh position={[-width * 0.3, -height * 0.12, 0.02]}><boxGeometry args={[width * 0.2, height * 0.91, 0.05]} /><meshBasicMaterial color="#82705a" /></mesh>
-      </>}
-      {index === 2 && <>
-        {[-0.32, -0.08, 0.18, 0.44].map((x) => <mesh key={x} position={[x * width, 0, 0.02]}><boxGeometry args={[0.025, height * 0.85, 0.05]} /><meshBasicMaterial color="#6da89a" /></mesh>)}
-        {[-0.28, 0.08, 0.38].map((y) => <mesh key={y} position={[0, y * height, 0.025]}><boxGeometry args={[width * 0.86, 0.022, 0.05]} /><meshBasicMaterial color="#4b897d" /></mesh>)}
-        <mesh position={[0.03, 0.04, 0.04]}><boxGeometry args={[width * 0.56, height * 0.12, 0.06]} /><meshBasicMaterial color="#a1d8c8" /></mesh>
-      </>}
-      <Text position={[-width / 2 + 0.27, -height / 2 + 0.34, 0.08]} maxWidth={width - 0.5} fontSize={0.2} color="#fff4e3" anchorX="left" letterSpacing={0.07}>{label}</Text>
-      <Text position={[-width / 2 + 0.28, -height / 2 + 0.12, 0.08]} maxWidth={width - 0.5} fontSize={0.08} color={item.accent} anchorX="left" letterSpacing={0.13}>POC / IN DEVELOPMENT</Text>
-    </group>
-  )
+function ShowroomTexture({ image, width, height }: { image: string; width: number; height: number }) {
+  const texture = useTexture(assetUrl(image))
+  texture.colorSpace = SRGBColorSpace
+  return <mesh position={[0, 0, 0.13]}><planeGeometry args={[width, height]} /><meshBasicMaterial map={texture} toneMapped={false} /></mesh>
 }
 
 function ShowroomInstallation({ item, position, index, onSelect }: { item: ShowroomProject; position: [number, number, number]; index: number; onSelect: () => void }) {
+  const [hovered, setHovered] = useState(false)
   const width = index === 1 ? 4.48 : 4.25
   const height = index === 1 ? 2.72 : 2.42
   const pedestalHeight = index === 0 ? 0.38 : index === 1 ? 0.18 : 0.58
   return (
-    <group position={position} onClick={(event) => { event.stopPropagation(); onSelect() }}>
-      <RoundedBox args={[width + 0.28, height + 0.28, 0.24]} radius={0.055} smoothness={2} castShadow><meshStandardMaterial color="#10110f" roughness={0.27} metalness={0.74} /></RoundedBox>
-      <ShowroomPoster item={item} index={index} width={width} height={height} />
+    <group position={position} onClick={(event) => { event.stopPropagation(); onSelect() }} onPointerOver={() => { setHovered(true); document.body.style.cursor = 'pointer' }} onPointerOut={() => { setHovered(false); document.body.style.cursor = 'auto' }}>
+      <RoundedBox args={[width + 0.28, height + 0.28, 0.24]} radius={0.055} smoothness={2} castShadow><meshStandardMaterial color="#10110f" emissive={item.accent} emissiveIntensity={hovered ? 0.16 : 0.025} roughness={0.27} metalness={0.74} /></RoundedBox>
+      <ShowroomTexture image={item.hero.thumbnail} width={width} height={height} />
       <mesh position={[0, -height / 2 - pedestalHeight / 2 - 0.17, -0.08]} castShadow><boxGeometry args={[width * 0.92, pedestalHeight, 0.72]} /><meshStandardMaterial color="#151411" roughness={0.58} metalness={0.5} /></mesh>
       <mesh position={[0, -height / 2 - pedestalHeight - 0.17, -0.12]}><boxGeometry args={[width * 1.05, 0.06, 0.95]} /><meshStandardMaterial color="#33291f" roughness={0.75} /></mesh>
-      <Text position={[-width / 2, -height / 2 - pedestalHeight - 0.53, 0.16]} maxWidth={width} fontSize={0.11} color={item.accent} anchorX="left" letterSpacing={0.12}>{item.sector.toUpperCase()}</Text>
-      <Text position={[-width / 2, -height / 2 - pedestalHeight - 0.77, 0.16]} maxWidth={width} fontSize={0.12} color="#f0e8de" anchorX="left">{item.status} / IN DEVELOPMENT</Text>
+      <Text position={[-width / 2 + 0.22, height / 2 - 0.3, 0.16]} maxWidth={width - 0.4} fontSize={0.12} color="#fff5e9" anchorX="left" letterSpacing={0.12}>{item.index}</Text>
+      <Text position={[-width / 2, -height / 2 - pedestalHeight - 0.48, 0.16]} maxWidth={width} fontSize={0.095} color={item.accent} anchorX="left" letterSpacing={0.12}>{item.sector.toUpperCase()}</Text>
+      <Text position={[-width / 2, -height / 2 - pedestalHeight - 0.7, 0.16]} maxWidth={width} fontSize={0.15} color="#f0e8de" anchorX="left">{item.title.toUpperCase()}</Text>
+      <Text position={[width / 2, -height / 2 - pedestalHeight - 0.49, 0.16]} maxWidth={width} fontSize={0.08} color="#cabaa8" anchorX="right" letterSpacing={0.09}>{item.status}</Text>
     </group>
   )
 }
 
 function ShowroomRoom({ onSelect }: { onSelect: (item: ShowroomProject) => void }) {
+  const installations = showroom.filter((item) => item.featured).slice(0, showroomAnchors.length)
+  const collection = showroomCollections.find((item) => item.id === installations[0]?.collection)
   return (
     <group>
-      {showroom.map((item, index) => <ShowroomInstallation key={item.id} item={item} index={index} position={anchorPosition(showroomAnchors[index])} onSelect={() => onSelect(item)} />)}
-      <Text position={[0, 6.65, -55.75]} fontSize={0.13} color="#d6b17d" letterSpacing={0.18} anchorX="center">COMMERCIAL SHOWROOM / CONCEPTS + PROTOTYPES</Text>
+      {installations.map((item, index) => <ShowroomInstallation key={item.id} item={item} index={index} position={anchorPosition(showroomAnchors[index])} onSelect={() => onSelect(item)} />)}
+      <Text position={[0, 6.65, -55.75]} fontSize={0.13} color="#d6b17d" letterSpacing={0.18} anchorX="center">{collection ? `${collection.label.toUpperCase()} / SERIES 001—003` : 'COMMERCIAL SHOWROOM'}</Text>
+      {collection && <Text position={[0, 6.28, -55.75]} fontSize={0.1} color="#c8bbae" letterSpacing={0.08} anchorX="center">{collection.subtitle.toUpperCase()}</Text>}
     </group>
   )
 }

@@ -1,16 +1,27 @@
 import { AnimatePresence, motion } from 'framer-motion'
 import { useEffect, useRef, type CSSProperties } from 'react'
-import { assetUrl, type Selection } from '../content/types'
+import { projectsForShowroomCollection } from '../content/showroom'
+import { assetUrl, type Selection, type ShowroomProject } from '../content/types'
 
 type CollectionModalProps = {
   selection: Selection | null
   onClose: () => void
+  onNavigateShowroom?: (project: ShowroomProject) => void
 }
 
 const mediaUrl = (url: string) => /^(https?:)?\/\//.test(url) ? url : assetUrl(url)
 
-export function CollectionModal({ selection, onClose }: CollectionModalProps) {
+export function CollectionModal({ selection, onClose, onNavigateShowroom }: CollectionModalProps) {
   const closeRef = useRef<HTMLButtonElement>(null)
+  const activeShowroom = selection?.type === 'showroom' ? selection.item : null
+  const showroomSeries = activeShowroom ? projectsForShowroomCollection(activeShowroom.collection) : []
+  const activeShowroomIndex = activeShowroom ? showroomSeries.findIndex((project) => project.id === activeShowroom.id) : -1
+
+  const navigateShowroom = (direction: number) => {
+    if (!activeShowroom || !onNavigateShowroom || showroomSeries.length < 2) return
+    const nextIndex = (activeShowroomIndex + direction + showroomSeries.length) % showroomSeries.length
+    onNavigateShowroom(showroomSeries[nextIndex])
+  }
 
   useEffect(() => {
     if (selection) window.requestAnimationFrame(() => closeRef.current?.focus())
@@ -79,17 +90,24 @@ export function CollectionModal({ selection, onClose }: CollectionModalProps) {
             {selection.type === 'showroom' && (
               <>
                 <div className="modal-visual showroom-visual">
-                  {selection.item.hero.youtubeId ? <iframe src={`https://www.youtube-nocookie.com/embed/${selection.item.hero.youtubeId}?rel=0`} title={selection.item.title} allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowFullScreen /> : selection.item.hero.videoUrl ? <video controls preload="metadata" poster={assetUrl(selection.item.hero.thumbnail)}><source src={mediaUrl(selection.item.hero.videoUrl)} /></video> : <img src={assetUrl(selection.item.hero.thumbnail)} alt={`${selection.item.sector} POC placeholder`} />}
+                  {selection.item.hero.youtubeId ? <iframe key={selection.item.id} src={`https://www.youtube-nocookie.com/embed/${selection.item.hero.youtubeId}?autoplay=1&playsinline=1&rel=0`} title={selection.item.title} allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowFullScreen /> : selection.item.hero.videoUrl ? <video key={selection.item.id} controls autoPlay playsInline preload="metadata" poster={assetUrl(selection.item.hero.thumbnail)}><source src={mediaUrl(selection.item.hero.videoUrl)} /></video> : <img src={assetUrl(selection.item.hero.thumbnail)} alt={`${selection.item.sector} POC placeholder`} />}
                 </div>
                 <div className="modal-copy showroom-copy">
-                  <p className="eyebrow">{selection.item.sector} / ATELIER {selection.item.status}{selection.item.hero.duration ? ` / ${selection.item.hero.duration}` : ''}</p>
+                  <p className="eyebrow">{selection.item.index} / {String(showroomSeries.length).padStart(3, '0')} / {selection.item.collectionLabel} / {selection.item.status}</p>
                   <h2>{selection.item.title}</h2>
-                  <p className="project-name">{selection.item.tagline}</p>
+                  <p className="project-name">{selection.item.conceptLine}</p>
                   <p>{selection.item.description}</p>
-                  <div className="showroom-detail"><span>Objective</span><p>{selection.item.objective}</p></div>
+                  {selection.item.extendedDescription && <p className="showroom-extended">{selection.item.extendedDescription}</p>}
+                  <div className="showroom-detail"><span>Creative territory</span><div className="tool-list">{selection.item.territories.map((item) => <i key={item}>{item}</i>)}</div></div>
+                  <div className="showroom-detail"><span>Capabilities</span><div className="tool-list">{selection.item.capabilities.map((item) => <i key={item}>{item}</i>)}</div></div>
                   <div className="showroom-detail"><span>Applications</span><div className="tool-list">{selection.item.applications.map((item) => <i key={item}>{item}</i>)}</div></div>
-                  <div className="showroom-detail"><span>Deliverables</span><ul>{selection.item.deliverables.map((item) => <li key={item.label}>{item.label}{item.format ? <em>{item.format}</em> : null}</li>)}</ul></div>
-                  <div className="showroom-detail"><span>Scale</span><div className="tool-list">{selection.item.scalability.map((item) => <i key={item}>{item}</i>)}</div></div>
+                  <div className="showroom-modal-actions">
+                    {selection.item.watchUrl && <a className="text-link" href={selection.item.watchUrl} target="_blank" rel="noreferrer">Watch on YouTube ↗</a>}
+                    {showroomSeries.length > 1 && <nav className="showroom-series-nav" aria-label={`${selection.item.collectionLabel} collection navigation`}>
+                      <button onClick={() => navigateShowroom(-1)} aria-label={`Previous ${selection.item.collectionLabel} concept`}>← Previous</button>
+                      <button onClick={() => navigateShowroom(1)} aria-label={`Next ${selection.item.collectionLabel} concept`}>Next →</button>
+                    </nav>}
+                  </div>
                 </div>
               </>
             )}

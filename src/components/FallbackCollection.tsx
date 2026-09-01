@@ -1,5 +1,5 @@
 import { images } from '../content/images'
-import { showroom } from '../content/showroom'
+import { projectsForShowroomCollection, showroom, showroomCollections } from '../content/showroom'
 import { site } from '../content/site'
 import type { Selection } from '../content/types'
 import { tutorials } from '../content/tutorials'
@@ -17,7 +17,9 @@ export function FallbackCollection({ onSelect }: { onSelect: (selection: Selecti
       <Collection title="Image Gallery" items={images} onSelect={(item) => onSelect({ type: 'artwork', item })} />
       <Collection title="Moving Room" items={videos} onSelect={(item) => onSelect({ type: 'video', item })} />
       <Collection title="Creative AI Lab" items={tutorials} onSelect={(item) => onSelect({ type: 'resource', item })} />
-      <Collection title="Hospitality / Showroom" items={showroom} onSelect={(item) => onSelect({ type: 'showroom', item })} />
+      {showroomCollections.map((collection) => (
+        <Collection key={collection.id} title={`${collection.label} / Showroom`} subtitle={collection.subtitle} items={projectsForShowroomCollection(collection.id)} onSelect={(item) => onSelect({ type: 'showroom', item })} />
+      ))}
       <footer className="fallback-contact">
         <p className="eyebrow">CONTACT</p>
         <h2>{site.contact.headline}</h2>
@@ -29,11 +31,12 @@ export function FallbackCollection({ onSelect }: { onSelect: (selection: Selecti
 
 type Selectable = typeof images[number] | typeof videos[number] | typeof tutorials[number] | typeof showroom[number]
 
-function Collection<T extends Selectable>({ title, items, onSelect }: { title: string; items: T[]; onSelect: (item: T) => void }) {
+function Collection<T extends Selectable>({ title, subtitle, items, onSelect }: { title: string; subtitle?: string; items: T[]; onSelect: (item: T) => void }) {
   return (
     <section className="fallback-section">
       <p className="eyebrow">COLLECTION</p>
       <h2>{title}</h2>
+      {subtitle && <p className="fallback-collection-subtitle">{subtitle}</p>}
       <div className="fallback-grid">
         {items.map((item) => (
           <button key={item.id} className="fallback-card" onClick={() => onSelect(item)}>

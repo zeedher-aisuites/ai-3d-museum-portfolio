@@ -4,7 +4,7 @@ import { Component, useMemo, useRef, useState, type ReactNode } from 'react'
 import type { BufferGeometry, Mesh, MeshBasicMaterial } from 'three'
 import { Color, SRGBColorSpace, Vector3 } from 'three'
 import { images } from '../content/images'
-import { showroom, showroomCollections } from '../content/showroom'
+import { showroom } from '../content/showroom'
 import { site } from '../content/site'
 import { assetUrl, type Artwork, type Resource, type Selection, type ShowroomProject, type Video } from '../content/types'
 import { tutorials } from '../content/tutorials'
@@ -224,12 +224,12 @@ function ShowroomInstallation({ item, position, index, onSelect }: { item: Showr
 
 function ShowroomRoom({ onSelect }: { onSelect: (item: ShowroomProject) => void }) {
   const installations = showroom.filter((item) => item.featured).slice(0, showroomAnchors.length)
-  const collection = showroomCollections.find((item) => item.id === installations[0]?.collection)
+  const featuredCollectionLabels = [...new Set(installations.map((item) => item.collectionLabel))]
   return (
     <group>
       {installations.map((item, index) => <ShowroomInstallation key={item.id} item={item} index={index} position={anchorPosition(showroomAnchors[index])} onSelect={() => onSelect(item)} />)}
-      <Text position={[0, 6.65, -55.75]} fontSize={0.13} color="#d6b17d" letterSpacing={0.18} anchorX="center">{collection ? `${collection.label.toUpperCase()} / SERIES 001—003` : 'COMMERCIAL SHOWROOM'}</Text>
-      {collection && <Text position={[0, 6.28, -55.75]} fontSize={0.1} color="#c8bbae" letterSpacing={0.08} anchorX="center">{collection.subtitle.toUpperCase()}</Text>}
+      <Text position={[0, 6.65, -55.75]} fontSize={0.13} color="#d6b17d" letterSpacing={0.18} anchorX="center">SHOWROOM / SELECTED CAPABILITIES</Text>
+      <Text position={[0, 6.28, -55.75]} fontSize={0.1} color="#c8bbae" letterSpacing={0.08} anchorX="center">{featuredCollectionLabels.join(' · ').toUpperCase()}</Text>
     </group>
   )
 }

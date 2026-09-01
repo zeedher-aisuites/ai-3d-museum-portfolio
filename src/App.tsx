@@ -2,7 +2,7 @@ import { lazy, Suspense, useEffect, useRef, useState, type PointerEvent, type Wh
 import { CollectionModal } from './components/CollectionModal'
 import { FallbackCollection } from './components/FallbackCollection'
 import { LoadingScreen } from './components/LoadingScreen'
-import { showroom } from './content/showroom'
+import { projectsForShowroomCollection, showroomCollections } from './content/showroom'
 import { rooms, site } from './content/site'
 import type { Selection } from './content/types'
 import { detectQuality, type Quality } from './utils/quality'
@@ -23,6 +23,7 @@ const webglSupported = () => {
 function App() {
   const [roomIndex, setRoomIndex] = useState(0)
   const [selection, setSelection] = useState<Selection | null>(null)
+  const [showroomCollectionId, setShowroomCollectionId] = useState(showroomCollections[0]?.id ?? '')
   const [quality, setQuality] = useState<Quality>(() => detectQuality())
   const [loading, setLoading] = useState(true)
   const [progress, setProgress] = useState(12)
@@ -34,6 +35,8 @@ function App() {
   const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
   const debug = new URLSearchParams(window.location.search).get('debug') === 'true'
   const room = rooms[roomIndex]
+  const activeShowroomCollection = showroomCollections.find((collection) => collection.id === showroomCollectionId) ?? showroomCollections[0]
+  const activeShowroomProjects = activeShowroomCollection ? projectsForShowroomCollection(activeShowroomCollection.id) : []
 
   useEffect(() => {
     const first = window.setTimeout(() => setProgress(52), 260)
@@ -55,6 +58,21 @@ function App() {
   }, [selection])
 
   const changeRoom = (direction: number) => setRoomIndex((index) => clampRoom(index + direction))
+
+  const selectShowroomCollection = (collectionId: string) => {
+    setSelection(null)
+    setShowroomCollectionId(collectionId)
+  }
+
+  const selectShowroomProject = (project: Extract<Selection, { type: 'showroom' }>['item']) => {
+    setShowroomCollectionId(project.collection)
+    setSelection({ type: 'showroom', item: project })
+  }
+
+  const selectMuseumItem = (nextSelection: Selection) => {
+    if (nextSelection.type === 'showroom') setShowroomCollectionId(nextSelection.item.collection)
+    setSelection(nextSelection)
+  }
 
   const onWheel = (event: WheelEvent<HTMLDivElement>) => {
     if (selection || Math.abs(event.deltaY) < 18 || Date.now() - wheelLock.current < 750) return
@@ -84,7 +102,7 @@ function App() {
       }}
     >
       <Suspense fallback={null}>
-        <MuseumExperience roomIndex={roomIndex} pointer={pointer} quality={quality} reducedMotion={reducedMotion} onSelect={setSelection} onEnvironmentReady={() => {
+        <MuseumExperience roomIndex={roomIndex} pointer={pointer} quality={quality} reducedMotion={reducedMotion} onSelect={selectMuseumItem} onEnvironmentReady={() => {
           setProgress(100)
           window.setTimeout(() => setLoading(false), 260)
         }} />
@@ -124,12 +142,27 @@ function App() {
         </aside>
       )}
       {room.id === 'showroom' && (
-        <nav className="showroom-mobile-list" aria-label="Hospitality collection">
-          {showroom.map((project) => <button key={project.id} onClick={() => setSelection({ type: 'showroom', item: project })}><b>{project.index}</b><span>{project.title}</span></button>)}
-        </nav>
+        <aside className="showroom-collection-panel" aria-label="Showroom collections">
+          <p className="eyebrow">Showroom / Collections</p>
+          <nav className="showroom-collection-tabs" aria-label="Choose a showroom collection">
+            {showroomCollections.map((collection) => (
+              <button key={collection.id} className={collection.id === activeShowroomCollection?.id ? 'active' : ''} onClick={() => selectShowroomCollection(collection.id)} aria-pressed={collection.id === activeShowroomCollection?.id}>
+                {collection.label}
+              </button>
+            ))}
+          </nav>
+          {activeShowroomCollection && <p className="showroom-collection-subtitle">{activeShowroomCollection.subtitle}</p>}
+          <div className="showroom-collection-projects">
+            {activeShowroomProjects.map((project) => (
+              <button key={project.id} onClick={() => selectShowroomProject(project)} aria-label={`Open ${project.collectionLabel} concept ${project.index}: ${project.title}`}>
+                <b>{project.index}</b><span>{project.title}</span>
+              </button>
+            ))}
+          </div>
+        </aside>
       )}
       {debug && <aside className="debug-panel">DEBUG<br />WAYPOINT: {room.id}<br />QUALITY: {quality}<br />ROOM: {roomIndex + 1}/{rooms.length}</aside>}
-      <CollectionModal selection={selection} onClose={() => setSelection(null)} onNavigateShowroom={(item) => setSelection({ type: 'showroom', item })} />
+      <CollectionModal selection={selection} onClose={() => setSelection(null)} onNavigateShowroom={selectShowroomProject} />
       <LoadingScreen progress={progress} visible={loading} />
     </main>
   )

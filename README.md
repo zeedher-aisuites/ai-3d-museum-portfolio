@@ -62,14 +62,14 @@ Add an entry to `src/content/tutorials.ts`. Choose a `type` (`workflow`, `breakd
 
 ## Adding a Showroom POC
 
-Showroom metadata lives exclusively in `src/content/showroom.ts`. Collections and projects are independent data records, so Hospitality is not hardcoded into the scene or player components.
+Showroom metadata lives exclusively in `src/content/showroom.ts`. Collections and projects are independent data records; the museum, selector, detail overlay and accessible fallback are generated from that data.
 
 1. Add collection metadata to `showroomCollections` if it does not already exist.
 2. Put an optimized 16:9 poster in `public/portfolio/showroom/<collection>/concept-<index>/thumbnail.webp` and set `hero.thumbnail` to that public-relative path.
 3. Add a data record with `collection`, `index`, `conceptLine`, `territories`, `capabilities`, `applications`, `status`, and the real media reference.
 4. Use `youtubeId` for a YouTube-hosted film. The player mounts only after an explicit selection and unmounts when the overlay closes or the visitor moves to another concept.
 
-The showroom screen, detail overlay, previous/next navigation, mobile list and fallback collection update automatically. There is no component work required to replace a poster with a real YouTube film.
+The showroom screen, detail overlay, previous/next navigation, collection selector and fallback collection update automatically. YouTube players mount only after a visitor explicitly selects a concept and unmount when that overlay closes or changes concept.
 
 ## Hospitality Showroom Series
 
@@ -87,13 +87,27 @@ YouTube hosts the actual streams. GitHub hosts the site, metadata, optimized Web
 
 1. Create `public/portfolio/showroom/hospitality/concept-004/thumbnail.webp`.
 2. Add one `ShowroomProject` to `showroom` with `collection: 'hospitality'`, `index: '004'`, its real YouTube ID and truthful `ATELIER POC` status.
-3. Keep `featured: false` until a future fourth physical installation is intentionally added; this avoids overcrowding the current three-screen room while the overlay and fallback can still use the metadata.
+3. Keep `featured: false` unless it intentionally replaces one of the three curated physical installations; the overlay and fallback will still expose it.
 
-### Add a future Real Estate collection
+### Current Showroom Collections
 
-1. Add `{ id: 'real-estate', label: 'Real Estate', subtitle: '...' }` to `showroomCollections`.
-2. Add real project records using `collection: 'real-estate'`, local posters and genuine video references.
-3. Choose which three `featured` projects deserve the current physical showroom screens. No core scene, modal, lazy-player or fallback component needs to be rewritten.
+The three physical screens are a curated cross-section of current ATELIER capabilities. The selector exposes every published concept within each collection.
+
+#### Hospitality
+
+- Concept 001 — Brand Experience
+- Concept 002 — The Night Moves
+- Concept 003 — Inside the Invitation
+
+#### Real Estate
+
+- Concept 001 — ALBA DISTRICT
+- YouTube ID: `jK91wfrCGEY`
+
+#### Micro Stories
+
+- Concept 001 — Girls' Night
+- YouTube ID: `tU8m1u80onE`
 
 ## Showroom vs Portfolio
 
@@ -167,7 +181,6 @@ Use `main` for stable production, `develop` for integration, and `feature/*` bra
 
 ## Current limitations
 
-- The three showroom POCs are intentional in-development placeholders. They have no final 20-second films yet; replace their `hero` media in `src/content/showroom.ts` when the masters are ready.
 - `studio@example.com` is a clearly marked temporary contact configuration. Replace it in `src/content/site.ts` before using the site for outreach.
 - The “Enable sound” control is preparatory; no audio file is included or autoplayed.
 - The GLB environment is active and a procedural architecture fallback remains available when the file cannot load.

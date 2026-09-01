@@ -90,10 +90,10 @@ export function CollectionModal({ selection, onClose, onNavigateShowroom }: Coll
             {selection.type === 'showroom' && (
               <>
                 <div className="modal-visual showroom-visual">
-                  {selection.item.hero.youtubeId ? <iframe key={selection.item.id} src={`https://www.youtube-nocookie.com/embed/${selection.item.hero.youtubeId}?autoplay=1&playsinline=1&rel=0`} title={selection.item.title} allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowFullScreen /> : selection.item.hero.videoUrl ? <video key={selection.item.id} controls autoPlay playsInline preload="metadata" poster={assetUrl(selection.item.hero.thumbnail)}><source src={mediaUrl(selection.item.hero.videoUrl)} /></video> : <img src={assetUrl(selection.item.hero.thumbnail)} alt={`${selection.item.sector} POC placeholder`} />}
+                  {selection.item.hero.youtubeId ? <iframe key={selection.item.id} src={`https://www.youtube-nocookie.com/embed/${selection.item.hero.youtubeId}?playsinline=1&rel=0`} title={selection.item.title} allow="encrypted-media; picture-in-picture; fullscreen" allowFullScreen /> : selection.item.hero.videoUrl ? <video key={selection.item.id} controls playsInline preload="metadata" poster={assetUrl(selection.item.hero.thumbnail)}><source src={mediaUrl(selection.item.hero.videoUrl)} /></video> : <img src={assetUrl(selection.item.hero.thumbnail)} alt={`${selection.item.sector} POC placeholder`} />}
                 </div>
                 <div className="modal-copy showroom-copy">
-                  <p className="eyebrow">{selection.item.index} / {String(showroomSeries.length).padStart(3, '0')} / {selection.item.collectionLabel} / {selection.item.status}</p>
+                  <p className="eyebrow">{selection.item.index} / {String(showroomSeries.length).padStart(3, '0')} / {selection.item.collectionLabel} / {selection.item.status}{selection.item.hero.duration ? ` / ${selection.item.hero.duration}` : ''}</p>
                   <h2>{selection.item.title}</h2>
                   <p className="project-name">{selection.item.conceptLine}</p>
                   <p>{selection.item.description}</p>
@@ -102,7 +102,7 @@ export function CollectionModal({ selection, onClose, onNavigateShowroom }: Coll
                   <div className="showroom-detail"><span>Capabilities</span><div className="tool-list">{selection.item.capabilities.map((item) => <i key={item}>{item}</i>)}</div></div>
                   <div className="showroom-detail"><span>Applications</span><div className="tool-list">{selection.item.applications.map((item) => <i key={item}>{item}</i>)}</div></div>
                   <div className="showroom-modal-actions">
-                    {selection.item.watchUrl && <a className="text-link" href={selection.item.watchUrl} target="_blank" rel="noreferrer">Watch on YouTube ↗</a>}
+                    {selection.item.watchUrl && <a className="text-link" href={selection.item.watchUrl} target="_blank" rel="noreferrer">Watch film on YouTube ↗</a>}
                     {showroomSeries.length > 1 && <nav className="showroom-series-nav" aria-label={`${selection.item.collectionLabel} collection navigation`}>
                       <button onClick={() => navigateShowroom(-1)} aria-label={`Previous ${selection.item.collectionLabel} concept`}>← Previous</button>
                       <button onClick={() => navigateShowroom(1)} aria-label={`Next ${selection.item.collectionLabel} concept`}>Next →</button>

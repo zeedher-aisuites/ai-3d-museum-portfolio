@@ -76,7 +76,18 @@ a { color: inherit; }
 .showroom-series-nav { display: flex; gap: .35rem; }
 .showroom-series-nav button { padding: .76rem .52rem; border: 1px solid #49433c; background: transparent; color: #e9dfd1; font: .53rem/1 'DM Mono', monospace; letter-spacing: .08em; text-transform: uppercase; cursor: pointer; }
 .showroom-series-nav button:hover, .showroom-series-nav button:focus-visible { border-color: #c89b69; color: #f3dfc8; outline: 0; }
-.showroom-mobile-list { display: none; }
+.showroom-collection-panel { position: absolute; z-index: 3; bottom: 5.2rem; left: 50%; width: min(39rem, calc(100% - 3rem)); transform: translateX(-50%); color: #e8ded2; text-align: center; }
+.showroom-collection-panel .eyebrow { margin: 0 0 .58rem; }
+.showroom-collection-tabs { display: flex; justify-content: center; gap: .35rem; }
+.showroom-collection-tabs button { min-height: 2.2rem; padding: .52rem .8rem; border: 1px solid rgba(226, 209, 187, .32); background: rgba(17, 16, 14, .5); color: #cfc2b4; font: .56rem/1.1 'DM Mono', monospace; letter-spacing: .08em; text-transform: uppercase; cursor: pointer; backdrop-filter: blur(8px); }
+.showroom-collection-tabs button:hover, .showroom-collection-tabs button:focus-visible, .showroom-collection-tabs button.active { border-color: #c89b69; color: #f3dfc8; background: rgba(38, 30, 23, .82); outline: 0; }
+.showroom-collection-subtitle { min-height: 1.3rem; margin: .62rem 0 .52rem; color: #c8bbae; font: .62rem/1.35 'DM Sans', sans-serif; }
+.showroom-collection-projects { display: flex; justify-content: center; gap: .35rem; }
+.showroom-collection-projects button { min-height: 2.7rem; padding: .45rem .65rem; border: 1px solid rgba(226, 209, 187, .28); background: rgba(17, 16, 14, .62); color: #e8ded2; text-align: left; cursor: pointer; backdrop-filter: blur(8px); }
+.showroom-collection-projects button:hover, .showroom-collection-projects button:focus-visible { border-color: #c89b69; color: #f3dfc8; outline: 0; }
+.showroom-collection-projects b { display: block; color: #d0a46e; font: .5rem/1 'DM Mono', monospace; letter-spacing: .1em; }
+.showroom-collection-projects span { display: block; margin-top: .28rem; font: .52rem/1.15 'DM Mono', monospace; letter-spacing: .04em; text-transform: uppercase; }
+.fallback-collection-subtitle { max-width: 36rem; margin: -.25rem 0 1.1rem; color: #bdb2a7; }
 .resource-copy { grid-column: 1 / -1; min-height: 22rem; max-width: 44rem; }
 .resource-button, .text-link { display: inline-block; margin-top: 1.7rem; padding: .78rem 1rem; border: 1px solid #c89b69; color: #f1e3d1; text-decoration: none; font: .64rem/1 'DM Mono', monospace; text-transform: uppercase; letter-spacing: .1em; }
 .resource-button:hover, .text-link:hover { background: #c89b69; color: #17130f; }
@@ -124,10 +135,12 @@ a { color: inherit; }
   .showroom-modal-actions { align-items: stretch; flex-direction: column; }
   .showroom-series-nav { width: 100%; }
   .showroom-series-nav button { flex: 1; }
-  .showroom-mobile-list { position: absolute; z-index: 3; left: 50%; bottom: 7.25rem; display: grid; grid-template-columns: repeat(3, 1fr); gap: .32rem; width: calc(100% - 2.3rem); transform: translateX(-50%); }
-  .showroom-mobile-list button { min-height: 2.75rem; padding: .48rem .32rem; border: 1px solid rgba(226, 209, 187, .32); background: rgba(17, 16, 14, .62); color: #e8ded2; text-align: left; backdrop-filter: blur(8px); }
-  .showroom-mobile-list b { display: block; color: #d0a46e; font: .5rem/1 'DM Mono', monospace; letter-spacing: .1em; }
-  .showroom-mobile-list span { display: block; margin-top: .28rem; font: .52rem/1.15 'DM Mono', monospace; letter-spacing: .04em; text-transform: uppercase; }
+  .showroom-collection-panel { bottom: 7rem; width: calc(100% - 2.3rem); }
+  .showroom-collection-tabs { gap: .25rem; }
+  .showroom-collection-tabs button { flex: 1; min-width: 0; padding: .48rem .25rem; font-size: .48rem; }
+  .showroom-collection-subtitle { min-height: 2.25rem; margin: .45rem 0; font-size: .55rem; }
+  .showroom-collection-projects { display: grid; grid-template-columns: repeat(3, 1fr); gap: .32rem; }
+  .showroom-collection-projects button { min-width: 0; padding: .48rem .32rem; }
   .contact-actions { bottom: 7.2rem; width: calc(100% - 2.3rem); gap: .35rem; }
   .contact-actions a { padding: .55rem .5rem; font-size: .48rem; }
 }

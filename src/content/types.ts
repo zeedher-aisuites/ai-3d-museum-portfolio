@@ -1,6 +1,17 @@
 export type RoomId = 'lobby' | 'gallery' | 'films' | 'lab' | 'showroom' | 'contact'
 
 export type ProjectStatus = 'portfolio' | 'concept' | 'client'
+export type LatestType = 'film' | 'story' | 'experiment'
+
+export type ProjectBreakdown = {
+  challenge?: string
+  approach?: string
+  process?: string[]
+  result?: string
+  referenceImages?: string[]
+  behindTheScenes?: string[]
+  tools?: string[]
+}
 
 export type Artwork = {
   id: string
@@ -17,6 +28,9 @@ export type Artwork = {
   image: string
   thumbnail?: string
   featured?: boolean
+  latest?: boolean
+  latestType?: LatestType
+  breakdown?: ProjectBreakdown
   accent: string
   orientation: 'landscape' | 'portrait' | 'square'
 }
@@ -37,6 +51,9 @@ export type Video = {
   duration?: string
   tools?: string[]
   featured?: boolean
+  latest?: boolean
+  latestType?: LatestType
+  breakdown?: ProjectBreakdown
 }
 
 export type Resource = {
@@ -48,12 +65,15 @@ export type Resource = {
   url?: string
   status: 'public' | 'coming-soon'
   featured?: boolean
+  latest?: boolean
+  latestType?: LatestType
 }
 
 export type ShowroomProject = {
   id: string
   collection: string
   collectionLabel: string
+  format?: 'series-teaser' | 'episode' | 'character-test' | 'environment-study' | 'action-test' | 'dialogue-test'
   index: string
   title: string
   conceptLine: string
@@ -73,6 +93,9 @@ export type ShowroomProject = {
   capabilities: string[]
   applications: string[]
   featured?: boolean
+  latest?: boolean
+  latestType?: LatestType
+  breakdown?: ProjectBreakdown
   accent: string
 }
 
@@ -80,6 +103,43 @@ export type ShowroomCollection = {
   id: string
   label: string
   subtitle: string
+  emptyState?: {
+    heading: string
+    description: string
+  }
+}
+
+export type DigitalTalent = {
+  id: string
+  name: string
+  hero: string
+  archetype?: string
+  shortDescription?: string
+  tags: string[]
+  capabilities: string[]
+  status?: 'available' | 'in-development'
+  additionalImages?: string[]
+  videoUrl?: string
+  youtubeId?: string
+  voiceAvailable?: boolean
+  personality?: string
+  featured?: boolean
+}
+
+export type CommercialContentCategory = 'food' | 'drink' | 'ugc' | 'item'
+
+export type CommercialContentItem = {
+  id: string
+  title?: string
+  category: CommercialContentCategory
+  poster: string
+  videoUrl?: string
+  youtubeId?: string
+  duration?: string
+  tags: string[]
+  featured?: boolean
+  latest?: boolean
+  latestType?: LatestType
 }
 
 export type Selection =
@@ -87,5 +147,7 @@ export type Selection =
   | { type: 'video'; item: Video }
   | { type: 'resource'; item: Resource }
   | { type: 'showroom'; item: ShowroomProject }
+  | { type: 'talent'; item: DigitalTalent }
+  | { type: 'commercial'; item: CommercialContentItem }
 
 export const assetUrl = (path: string) => `${import.meta.env.BASE_URL}${path.replace(/^\//, '')}`

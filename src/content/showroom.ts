@@ -18,6 +18,15 @@ export const showroomCollections: ShowroomCollection[] = [
     label: 'Micro Stories',
     subtitle: 'Short-form cinematic narratives with synthetic characters.',
   },
+  {
+    id: 'original-worlds',
+    label: 'Original Worlds',
+    subtitle: 'Original animated worlds, characters and stories built with AI.',
+    emptyState: {
+      heading: 'Original animated series in development',
+      description: 'Original characters, environments and episodic storytelling exploring AI-first animation.',
+    },
+  },
 ]
 
 // These are speculative ATELIER demonstrations, never client commissions.
@@ -44,6 +53,8 @@ export const showroom: ShowroomProject[] = [
     capabilities: ['Cinematic advertising', 'Food and beverage direction', 'Architectural atmosphere', 'Premium lighting', 'Brand consistency', 'Multi-venue creative systems'],
     applications: ['Digital signage', 'Venue screens', 'Commercial', 'Event display', 'Web', 'Social cutdown'],
     featured: true,
+    latest: true,
+    latestType: 'film',
     accent: '#d0a46e',
   },
   {
@@ -137,6 +148,8 @@ export const showroom: ShowroomProject[] = [
     capabilities: ['Character continuity', 'Multi-character performance', 'Mexican Spanish dialogue', 'Lip sync', 'Micro-acting', 'Narrative blocking', 'Physical interaction', 'Prop and fabric behavior', 'Cinematic direction', 'Short-form storytelling'],
     applications: ['Branded entertainment', 'Short-form campaigns', 'Episodic social content', 'Narrative commercials', 'Character-led campaigns', 'Teasers', 'Web', 'Social'],
     featured: true,
+    latest: true,
+    latestType: 'story',
     accent: '#b98278',
   },
 ]

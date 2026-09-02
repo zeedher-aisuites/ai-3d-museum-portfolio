@@ -165,7 +165,7 @@ function VideoScreen({ item, position, onSelect }: { item: Video; position: [num
 }
 
 function FilmRoom({ onSelect }: { onSelect: (item: Video) => void }) {
-  return <group>{videos.map((item, index) => <VideoScreen key={item.id} item={item} position={anchorPosition(videoAnchors[index])} onSelect={() => onSelect(item)} />)}<Text position={[0, 6.65, -25.75]} fontSize={0.13} color="#c9b082" letterSpacing={0.18} anchorX="center">FINISHED MOVING IMAGE / SELECTED WORK</Text></group>
+  return <group>{videos.map((item, index) => <VideoScreen key={item.id} item={item} position={anchorPosition(videoAnchors[index])} onSelect={() => onSelect(item)} />)}<Text position={[0, 6.65, -25.75]} fontSize={0.13} color="#c9b082" letterSpacing={0.18} anchorX="center">SELECTED MOTION / CONTENT SYSTEMS</Text></group>
 }
 
 function Terminal({ item, position, onSelect }: { item: Resource; position: [number, number, number]; onSelect: () => void }) {
@@ -182,7 +182,7 @@ function Terminal({ item, position, onSelect }: { item: Resource; position: [num
 }
 
 function LabRoom({ onSelect }: { onSelect: (item: Resource) => void }) {
-  return <group>{tutorials.map((item, index) => <Terminal key={item.id} item={item} position={anchorPosition(labAnchors[index])} onSelect={() => onSelect(item)} />)}<Text position={[0, 6.65, -40.75]} fontSize={0.13} color="#a8c8b4" letterSpacing={0.18} anchorX="center">CREATIVE AI LAB / PRODUCTION SYSTEMS</Text></group>
+  return <group>{tutorials.map((item, index) => <Terminal key={item.id} item={item} position={anchorPosition(labAnchors[index])} onSelect={() => onSelect(item)} />)}<Text position={[0, 6.65, -40.75]} fontSize={0.13} color="#a8c8b4" letterSpacing={0.18} anchorX="center">AI DEMO LAB / PRODUCTION PIPELINE</Text></group>
 }
 
 function Lobby() {
@@ -191,7 +191,7 @@ function Lobby() {
       <Float speed={1.1} rotationIntensity={0.025} floatIntensity={0.08}><mesh position={[0, 2.75, 8.15]} rotation={[0.12, 0.32, 0]} castShadow><icosahedronGeometry args={[1.05, 3]} /><meshStandardMaterial color="#3c3025" roughness={0.28} metalness={0.84} /></mesh></Float>
       <Text position={[0, 5.45, 6.7]} fontSize={0.52} color="#f1ebe2" anchorX="center" letterSpacing={0.18}>{site.name}</Text>
       <Text position={[0, 4.78, 6.7]} fontSize={0.1} color="#c69d6d" anchorX="center" letterSpacing={0.22}>AI-FIRST CREATIVE STUDIO / 2026</Text>
-      <Text position={[0, 4.3, 6.7]} maxWidth={6.6} textAlign="center" fontSize={0.11} color="#d9cec0" anchorX="center">Creative systems, moving image and visual experiences for modern brands.</Text>
+      <Text position={[0, 4.3, 6.7]} maxWidth={6.6} textAlign="center" fontSize={0.11} color="#d9cec0" anchorX="center">{site.intro}</Text>
       <Text position={[0, 1.08, 6.7]} fontSize={0.1} color="#e7d8c5" anchorX="center" letterSpacing={0.16}>SCROLL TO BEGIN</Text>
     </group>
   )
@@ -235,7 +235,7 @@ function ShowroomRoom({ onSelect }: { onSelect: (item: ShowroomProject) => void 
 }
 
 function ContactRoom() {
-  return <group><Text position={[0, 5.8, -68.04]} fontSize={0.12} color="#c3a172" anchorX="center" letterSpacing={0.26}>LET’S WORK</Text><Text position={[0, 4.25, -68.04]} maxWidth={12} textAlign="center" fontSize={0.7} color="#f3ece2" anchorX="center">{site.contact.headline}</Text><Text position={[0, 2.45, -68.04]} fontSize={0.19} color="#cabdae" anchorX="center">{site.contact.email}</Text><Text position={[0, 1.82, -68.04]} fontSize={0.1} color="#b9ac9d" anchorX="center" letterSpacing={0.12}>{site.contact.isPlaceholder ? 'CONFIGURE CONTACT IN src/content/site.ts' : 'CREATE A CAMPAIGN / BUILD A SYSTEM / EXPLORE A POC'}</Text></group>
+  return <group><Text position={[0, 5.8, -68.04]} fontSize={0.12} color="#c3a172" anchorX="center" letterSpacing={0.26}>WORK WITH US</Text><Text position={[0, 4.25, -68.04]} maxWidth={12} textAlign="center" fontSize={0.7} color="#f3ece2" anchorX="center">{site.contact.headline}</Text><Text position={[0, 2.45, -68.04]} fontSize={0.19} color="#cabdae" anchorX="center">{site.contact.email}</Text><Text position={[0, 1.82, -68.04]} fontSize={0.1} color="#b9ac9d" anchorX="center" letterSpacing={0.12}>{site.contact.isPlaceholder ? 'CONFIGURE CONTACT IN src/content/site.ts' : 'CAMPAIGN / ONGOING CONTENT / AI SYSTEM'}</Text></group>
 }
 
 function AnimatedLight({ position, color }: { position: [number, number, number]; color: string }) {

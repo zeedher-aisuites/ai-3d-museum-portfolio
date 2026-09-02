@@ -1,21 +1,21 @@
-# ATELIER / AI-FIRST CREATIVE STUDIO
+# ATELIER / LIVING AI-FIRST CREATIVE STUDIO PORTFOLIO
 
-ATELIER is a static-first, interactive 3D portfolio and commercial showroom built with React, Vite, Three.js, React Three Fiber, Drei, and Framer Motion. It is designed for GitHub Pages with no database, authentication, tracking, backend, or paid infrastructure.
+ATELIER is a static-first interactive 3D portfolio for a creative studio, AI production system, narrative lab, digital talent studio, automation/product lab, and original-IP practice. It is built with React, Vite, Three.js, React Three Fiber, Drei, and Framer Motion, and deploys to GitHub Pages without a database, tracking, authentication, or frontend secrets.
 
-## Atelier Architecture
+## Information architecture
 
-The six rooms are one continuous commercial story:
+The six-room museum remains the presentation shell. New capabilities live in data-driven editorial layers, overlays, and the accessible fallback rather than additional 3D rooms.
 
-| Moment | Purpose |
+| Room | Current programme |
 | --- | --- |
-| `00 / ARRIVAL` | Who we are — studio positioning. |
-| `01 / IMAGE` | Finished visual work for campaigns, products and spaces. |
-| `02 / MOTION` | Finished moving image. |
-| `03 / AI LAB` | How we build: production systems, workflows and infrastructure. |
-| `04 / SHOWROOM` | What we could build for a business: concepts, prototypes and POCs. |
-| `05 / CONTACT` | Start a collaboration. |
+| `00 / ARRIVAL` | **What We Build** capability index and **Now Shipping** editorial highlights. |
+| `01 / IMAGE` | Selected Work, AI Talent casting roster, and Commercial Content Systems — Static. |
+| `02 / MOTION` | Selected Motion and Commercial Content Systems — Motion. |
+| `03 / AI LAB` | AI Demo Lab frontend and client-facing Production Pipeline. |
+| `04 / SHOWROOM` | Hospitality, Real Estate, Micro Stories, and Original Worlds. |
+| `05 / CONTACT` | Work With Us: campaign, ongoing content, or AI system. |
 
-The 3D scene is only the presentation layer. Content remains data-driven and can change without editing camera, scroll, GLB, or interaction code.
+The content model is deliberately separate from the GLB, camera waypoints, touch navigation, reduced-motion handling, and fallback. Do not add more rooms for new content categories unless a spatial experience cannot be expressed through this system.
 
 ## Run locally
 
@@ -24,164 +24,242 @@ npm install
 npm run dev
 ```
 
-## Production build
+For a GitHub Pages-equivalent build:
 
-```bash
+```powershell
+$env:VITE_REPOSITORY_NAME = 'ai-3d-museum-portfolio'
 npm run build
-npm run preview
 ```
 
-`?debug=true` adds a small non-production panel with the active waypoint and quality level.
+`?debug=true` enables a small non-production waypoint panel.
 
-## Content management
+## Content system
 
-| Content | Data file | Asset folder |
+| Content | Data file | Future asset location |
 | --- | --- | --- |
-| Image portfolio | `src/content/images.ts` | `public/portfolio/images/` |
-| Motion portfolio | `src/content/videos.ts` | `public/portfolio/thumbnails/`, `public/portfolio/videos/` |
-| Creative AI Lab systems | `src/content/tutorials.ts` | n/a |
-| Commercial showroom POCs | `src/content/showroom.ts` | `public/portfolio/showroom/`, `public/portfolio/videos/` |
-| Studio identity, contact and CTAs | `src/content/site.ts` | n/a |
+| Selected image work | `src/content/images.ts` | `public/portfolio/images/` |
+| Selected motion work | `src/content/videos.ts` | `public/portfolio/thumbnails/`, `public/portfolio/videos/` |
+| AI Talent roster | `src/content/talent.ts` | `public/portfolio/talent/<talent-id>/` |
+| Commercial static → motion pairs | `src/content/commercial.ts` | `public/portfolio/commercial/<concept-id>/` |
+| AI Lab systems | `src/content/tutorials.ts` | n/a |
+| Capability index and production pipeline | `src/content/capabilities.ts` | n/a |
+| Latest / Now Shipping lens | `src/content/latest.ts` | derived; no duplicate metadata |
+| Commercial showroom collections | `src/content/showroom.ts` | `public/portfolio/showroom/` |
+| Studio identity and Work With Us routes | `src/content/site.ts` | n/a |
 
-### Add an image portfolio project
+### Latest / Now Shipping
 
-1. Add an optimized `.webp`, `.avif`, `.jpg`, `.png`, or `.svg` to `public/portfolio/images/`.
-2. Add its metadata to `src/content/images.ts`, including `category`, optional `sector`, `status`, tools and `orientation`.
-3. Use a public-relative asset path, for example `portfolio/images/my-project.webp`. The image room and fallback collection update automatically.
+`src/content/latest.ts` derives its highlights from real content records. Do not write duplicate titles, descriptions, or media references for this layer.
 
-### Add a moving-image project
+Supported optional metadata on image, video, resource, commercial, and showroom records:
 
-1. Add a lightweight poster to `public/portfolio/thumbnails/`.
-2. Add metadata to `src/content/videos.ts`. Use `thumbnail`, optional `youtubeId` or `videoUrl`, and optional `duration`.
-
-No player is loaded until a visitor opens the project modal. A YouTube iframe, or a native `videoUrl`, mounts only inside that modal.
-
-### Add an AI Lab system
-
-Add an entry to `src/content/tutorials.ts`. Choose a `type` (`workflow`, `breakdown`, `tutorial`, `tool`, or `system`) and use `status: 'coming-soon'` whenever there is no genuine public URL. Do not add placeholder links.
-
-## Adding a Showroom POC
-
-Showroom metadata lives exclusively in `src/content/showroom.ts`. Collections and projects are independent data records; the museum, selector, detail overlay and accessible fallback are generated from that data.
-
-1. Add collection metadata to `showroomCollections` if it does not already exist.
-2. Put an optimized 16:9 poster in `public/portfolio/showroom/<collection>/concept-<index>/thumbnail.webp` and set `hero.thumbnail` to that public-relative path.
-3. Add a data record with `collection`, `index`, `conceptLine`, `territories`, `capabilities`, `applications`, `status`, and the real media reference.
-4. Use `youtubeId` for a YouTube-hosted film. The player mounts only after an explicit selection and unmounts when the overlay closes or the visitor moves to another concept.
-
-The showroom screen, detail overlay, previous/next navigation, collection selector and fallback collection update automatically. YouTube players mount only after a visitor explicitly selects a concept and unmount when that overlay closes or changes concept.
-
-## Hospitality Showroom Series
-
-The first Showroom collection is **Hospitality**: _Three creative directions. One production system._ It is a series of speculative ATELIER POCs, not client commissions.
-
-| Index | Title | YouTube ID |
-| --- | --- | --- |
-| `001` | Brand Experience | `9pNYF_Eyk1Y` |
-| `002` | The Night Moves | `wNpkoSjUNOk` |
-| `003` | Inside the Invitation | `cZgG3cKVMCI` |
-
-YouTube hosts the actual streams. GitHub hosts the site, metadata, optimized WebP posters and interface only. Never commit the original Hospitality MP4 masters to this repository.
-
-### Add Hospitality Concept 004
-
-1. Create `public/portfolio/showroom/hospitality/concept-004/thumbnail.webp`.
-2. Add one `ShowroomProject` to `showroom` with `collection: 'hospitality'`, `index: '004'`, its real YouTube ID and truthful `ATELIER POC` status.
-3. Keep `featured: false` unless it intentionally replaces one of the three curated physical installations; the overlay and fallback will still expose it.
-
-### Current Showroom Collections
-
-The three physical screens are a curated cross-section of current ATELIER capabilities. The selector exposes every published concept within each collection.
-
-#### Hospitality
-
-- Concept 001 — Brand Experience
-- Concept 002 — The Night Moves
-- Concept 003 — Inside the Invitation
-
-#### Real Estate
-
-- Concept 001 — ALBA DISTRICT
-- YouTube ID: `jK91wfrCGEY`
-
-#### Micro Stories
-
-- Concept 001 — Girls' Night
-- YouTube ID: `tU8m1u80onE`
-
-## Showroom vs Portfolio
-
-- **SHOWROOM** = concepts, prototypes and sales demonstrations. They are clearly marked and must not imply a completed client commission.
-- **PORTFOLIO** = finished visual or moving-image work. A successful POC can later be represented in Image or Motion as final work without changing the showroom architecture.
-
-## Contact configuration
-
-Edit `src/content/site.ts` to set the real `email`, social URLs and collaboration routes. The committed `studio@example.com` value is an explicit temporary placeholder; replace it before production outreach.
-
-## 3D Environment Pipeline
-
-Phase 2 uses a production GLB at `public/models/museum.glb` as the preferred architectural shell. It is a 0.75 MB, web-safe model generated from the source script `scripts/generate-museum-glb.mjs`, with no runtime textures or paid assets. The GLB contributes only static architecture: travertine-like walls, portals, columns, floors, display walls, laboratory counter, stairs, and the contact monument.
-
-```
-architecture source / Blender source
-  → cleanup and semantic naming
-  → PBR material consolidation and geometry reduction
-  → GLB export
-  → public/models/museum.glb
-  → useGLTF() in src/scenes/MuseumEnvironment.tsx
+```ts
+latest?: boolean
+latestType?: 'film' | 'story' | 'experiment'
 ```
 
-`MuseumExperience` first checks for the GLB. If the model is unavailable or fails to parse, `MuseumScene` uses the preserved procedural environment instead. Interactive portfolio content is never baked into the model:
+The current records surface the latest Hospitality film, Micro Story, and campaign-image-system experiment.
 
-- `src/scenes/anchors.ts` maps semantic art, screen, and terminal anchors.
-- The GLB exports matching empty nodes such as `ANCHOR_Room01_WallA_01`.
-- React continues to create frames, video screens, terminal interactions, overlays, links, and camera navigation.
+### Selected Work
 
-To regenerate the included model after an architectural edit:
+`featured` remains the editorial selection flag for physical screens and curated work. In the showroom, only three `featured` records occupy the existing physical screens; every record remains accessible through its collection selector and fallback.
 
-```bash
-node scripts/generate-museum-glb.mjs
+## AI Talent
+
+`src/content/talent.ts` is intentionally empty until studio-approved original character portraits and details are supplied. The UI supports approximately 10–50 records without a component rewrite.
+
+```ts
+type DigitalTalent = {
+  id: string
+  name: string
+  hero: string
+  archetype?: string
+  shortDescription?: string
+  tags: string[]
+  capabilities: string[]
+  status?: 'available' | 'in-development'
+  additionalImages?: string[]
+  videoUrl?: string
+  youtubeId?: string
+  voiceAvailable?: boolean
+  personality?: string
+  featured?: boolean
+}
 ```
 
-For a Blender-authored replacement, preserve the anchor names, use meters, apply transforms, remove hidden or render-only geometry, consolidate PBR materials, keep textures at 512–2048px, and export a single GLB. Check the finished file size before committing; the target is 5–15 MB or less for a textured replacement.
+The roster is an editorial casting wall, not a social profile directory. Hover/focus reveals the name and capabilities; click/tap opens the existing detail overlay. Do not add follower counts, social handles, engagement metrics, or unapproved characters.
 
-### Asset provenance
+### Talent asset convention
 
-No external BlendSwap or Poly Haven file is bundled in this release. The architectural GLB is original project geometry. These CC0 references were researched as optional source material and are documented for future manual work:
+```text
+public/portfolio/talent/<talent-id>/hero.webp
+public/portfolio/talent/<talent-id>/detail-001.webp
+public/portfolio/talent/<talent-id>/motion.mp4       # only when approved and optimized
+```
 
-| Asset | Creator | Source | License | Used now |
-| --- | --- | --- | --- | --- |
-| Colonnato | lucasassone | https://blendswap.com/blend/11277 | CC0 | Reference only |
-| Modern Home Interior | CianGameDev | https://blendswap.com/blend/18670 | CC0 | Reference only |
-| Interior Room Visualization | MattMump | https://blendswap.com/blend/6437 | CC0 | Reference only |
-| Interior art | Ndakasha | https://blendswap.com/blend/16843 | CC0 | Reference only |
-| Poly Haven assets | Poly Haven contributors | https://polyhaven.com/ | CC0 | Not bundled |
+Use optimized WebP/AVIF portraits, descriptive alt-ready names in data, and public-relative paths such as `portfolio/talent/aria/hero.webp`.
 
-The flagship `midnight-grand-tourer-v2.png` is an original project image generated for this portfolio; it is not an externally downloaded asset.
+## Commercial Content Systems
+
+One `CommercialContentItem` is one commercial concept, not two unrelated portfolio records. It pairs poster → motion → campaign-ready delivery.
+
+```ts
+type CommercialContentItem = {
+  id: string
+  title?: string
+  category: 'food' | 'drink' | 'ugc' | 'item'
+  poster: string
+  videoUrl?: string
+  youtubeId?: string
+  duration?: string
+  tags: string[]
+  featured?: boolean
+}
+```
+
+The static and motion walls are intentionally empty until approved assets arrive. When records are added, posters use native lazy loading. Native motion previews mount only for the currently hovered/focused card, are muted/inline/looped, unmount on exit, and remain disabled under `prefers-reduced-motion`. Touch opens the same project overlay instead. Never preload a wall of videos or add placeholder commercial work.
+
+### Commercial asset convention
+
+```text
+public/portfolio/commercial/<concept-id>/poster.webp
+public/portfolio/commercial/<concept-id>/motion.mp4
+```
+
+Example data paths: `portfolio/commercial/citrus-soda/poster.webp` and `portfolio/commercial/citrus-soda/motion.mp4`. Keep motion files short, muted-preview-ready, and web-optimized; use YouTube when the public master belongs on YouTube.
+
+## AI Demo Lab
+
+The Demo Lab is a functional frontend and adapter contract, not a fake generator. It accepts JPEG, PNG, and WebP files up to 10 MB, previews the selected image with a revocable object URL, supports replacement/removal, and has explicit states:
+
+```text
+idle → ready → uploading → generating → success | error
+```
+
+Its content type controls are `food`, `drink`, `ugc`, and `item`. Progress copy represents stages only; the UI does not invent percentage progress.
+
+### Backend configuration
+
+Set the backend origin at build time only:
+
+```text
+VITE_DEMO_API_URL=https://your-api.example.com
+```
+
+When the variable is missing, the interface remains usable as a UX preview and clearly says that the live generation backend is not connected. It does not make a request and does not fabricate a generated result.
+
+`src/services/demoLabApi.ts` is the sole browser adapter. No API key, ComfyUI credential, provider token, or localhost production URL belongs in this repository.
+
+### Future API contract
+
+```http
+POST /generate-flyer
+Content-Type: multipart/form-data
+
+image=<JPEG|PNG|WEBP>
+category=<food|drink|ugc|item>
+```
+
+Synchronous response:
+
+```json
+{ "status": "success", "imageUrl": "https://cdn.example/result.webp" }
+```
+
+Asynchronous response:
+
+```json
+{ "status": "queued", "jobId": "job_123" }
+```
+
+Polling contract:
+
+```http
+GET /jobs/:jobId
+```
+
+```json
+{ "status": "queued" | "processing" | "success" | "error", "imageUrl": "...", "message": "..." }
+```
+
+The backend must own provider credentials and implement MIME sniffing, 10 MB-or-lower server limits, rate limiting, moderation/unsafe-content policy, per-IP or session quotas, request timeout, temporary storage, automatic deletion, and practical job cancellation. Frontend validation is a user-experience aid, not a security boundary.
+
+## Showroom
+
+Showroom metadata lives in `src/content/showroom.ts`. The selector, physical-screen curation, overlay, scoped previous/next navigation, and WebGL fallback all derive from it.
+
+| Collection | Published work |
+| --- | --- |
+| Hospitality | 001 Brand Experience (`9pNYF_Eyk1Y`), 002 The Night Moves (`wNpkoSjUNOk`), 003 Inside the Invitation (`cZgG3cKVMCI`) |
+| Real Estate | 001 ALBA DISTRICT (`jK91wfrCGEY`) |
+| Micro Stories | 001 Girls' Night (`tU8m1u80onE`) |
+| Original Worlds | Original animated series in development; no titles, episodes, characters, thumbnails, or media have been invented. |
+
+The existing three physical screens remain a cross-section: `hospitality-001`, `real-estate-001`, and `micro-stories-001`. Original Worlds is an honest in-development collection until real original-IP assets are supplied.
+
+YouTube players mount only after a visitor explicitly opens a project and unmount on close or project change. There is no autoplay. Do not commit original video masters when YouTube hosts the public stream.
+
+### Future Original Worlds assets
+
+When material exists, use one record per genuine teaser, episode, character test, environment study, action test, or dialogue test. `ShowroomProject.format` supports those six record types. Suggested location:
+
+```text
+public/portfolio/showroom/original-worlds/<record-id>/thumbnail.webp
+```
+
+Add only real titles, descriptions, posters, and media URLs. Original Worlds is original-IP development; it is not a generic cartoon-placeholder section.
+
+## Optional project breakdowns
+
+Image, video, and showroom records support an optional lightweight `breakdown` object. Populate it only from approved information:
+
+```ts
+breakdown?: {
+  challenge?: string
+  approach?: string
+  process?: string[]
+  result?: string
+  referenceImages?: string[]
+  behindTheScenes?: string[]
+  tools?: string[]
+}
+```
+
+The showroom overlay renders supplied brief, direction, process, and final fields. Never invent client metrics, results, private prompts, or behind-the-scenes content.
+
+## Work With Us
+
+`src/content/site.ts` provides three direct, mailto-based routes:
+
+- **I Need a Campaign** — commercials, hospitality, real estate, launches, branded storytelling.
+- **I Need Ongoing Content** — social media, UGC, AI Talent, food and beverage, recurring production.
+- **I Need an AI System** — creative automation, custom workflows, internal tools, POC infrastructure.
+
+No CRM, authentication, database, or analytics is included. Replace `studio@example.com` before production outreach.
 
 ## Performance and accessibility
 
-- Low, medium, and high render modes control DPR, antialiasing, and shadows.
-- The default quality is chosen from screen size, cores, and device memory; visitors can override it.
-- Touch swipe, scroll, arrows, Page Up/Down, and room controls all navigate the museum.
-- `prefers-reduced-motion` reduces camera drift and interface animation.
-- When WebGL is unavailable, a fully usable collection view renders with the same content and video/resource overlays.
+- The initial museum remains lazy-loaded and keeps the existing GLB/procedural fallback.
+- Talent and commercial images use lazy loading. Commercial preview videos mount only on intent.
+- YouTube iframes mount only in explicit project overlays.
+- Native controls, visible focus styles, labels, and buttons preserve keyboard and touch use; hover is never the sole activation path.
+- `prefers-reduced-motion` continues to reduce camera/interface motion and disables commercial hover playback.
+- The no-WebGL fallback exposes image, motion, talent, commercial-system readiness, Demo Lab, production pipeline, showroom collections, and Work With Us routes.
 
-## GitHub Pages deployment
+## Production build and GitHub Pages
 
-The workflow at `.github/workflows/deploy-pages.yml` deploys only pushes to `main`.
+```bash
+npm run lint
+npm run build
+```
 
-1. Push this repository to GitHub.
-2. In **Settings → Pages**, choose **GitHub Actions** as the source once.
-3. Push to `main`; the workflow builds with the repository base path and publishes to `https://<username>.github.io/<repository>/`.
+The Vite base path comes from `VITE_REPOSITORY_NAME`; `assetUrl()` keeps public-relative content paths compatible with repository-hosted GitHub Pages. `.github/workflows/deploy-pages.yml` deploys pushes to `main`.
 
-## Branches and releases
+## Current intentional asset gaps
 
-Use `main` for stable production, `develop` for integration, and `feature/*` branches for work. V3 showroom work is developed on `feature/atelier-v3-showroom` before merging through `develop` to `main`.
+- AI Talent portraits and optional motion/voice material have not yet been supplied.
+- Food/drink commercial posters and their short motion counterparts have not yet been supplied.
+- Original Worlds series assets have not yet been supplied.
+- The Demo Lab backend is not connected unless `VITE_DEMO_API_URL` is configured.
 
-## Current limitations
-
-- `studio@example.com` is a clearly marked temporary contact configuration. Replace it in `src/content/site.ts` before using the site for outreach.
-- The “Enable sound” control is preparatory; no audio file is included or autoplayed.
-- The GLB environment is active and a procedural architecture fallback remains available when the file cannot load.
-- The current GLB intentionally uses material-first architecture rather than photo textures; a future Blender replacement can add optimized CC0 PBR textures after measuring payload and mobile performance.
+These states are represented intentionally in the interface. Do not replace them with stock imagery, fake digital characters, invented episodes, or placeholder links.

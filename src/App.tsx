@@ -2,9 +2,10 @@ import { lazy, Suspense, useEffect, useRef, useState, type PointerEvent, type Wh
 import { CollectionModal } from './components/CollectionModal'
 import { FallbackCollection } from './components/FallbackCollection'
 import { LoadingScreen } from './components/LoadingScreen'
+import { ArrivalLayer, ImageLayer, LabLayer, MotionLayer } from './components/StudioLayers'
 import { projectsForShowroomCollection, showroomCollections } from './content/showroom'
 import { rooms, site } from './content/site'
-import type { Selection } from './content/types'
+import type { RoomId, Selection } from './content/types'
 import { detectQuality, type Quality } from './utils/quality'
 
 const MuseumExperience = lazy(() => import('./scenes/MuseumExperience').then((module) => ({ default: module.MuseumExperience })))
@@ -58,6 +59,13 @@ function App() {
   }, [selection])
 
   const changeRoom = (direction: number) => setRoomIndex((index) => clampRoom(index + direction))
+
+  const navigateToRoom = (roomId: RoomId, collectionId?: string) => {
+    const nextIndex = rooms.findIndex((item) => item.id === roomId)
+    if (nextIndex >= 0) setRoomIndex(nextIndex)
+    if (collectionId) setShowroomCollectionId(collectionId)
+    setSelection(null)
+  }
 
   const selectShowroomCollection = (collectionId: string) => {
     setSelection(null)
@@ -136,7 +144,7 @@ function App() {
       {room.id === 'contact' && (
         <aside className="contact-actions" aria-label="Collaboration routes">
           {site.contact.routes.map((route) => (
-            <a key={route.label} href={`mailto:${site.contact.email}?subject=${encodeURIComponent(route.subject)}`}>{route.label}</a>
+            <a key={route.label} href={`mailto:${site.contact.email}?subject=${encodeURIComponent(route.subject)}`}><b>{route.label}</b><span>{route.description}</span></a>
           ))}
           {site.contact.isPlaceholder && <small>Replace contact details in src/content/site.ts</small>}
         </aside>
@@ -152,15 +160,19 @@ function App() {
             ))}
           </nav>
           {activeShowroomCollection && <p className="showroom-collection-subtitle">{activeShowroomCollection.subtitle}</p>}
-          <div className="showroom-collection-projects">
+          {activeShowroomProjects.length > 0 ? <div className="showroom-collection-projects">
             {activeShowroomProjects.map((project) => (
               <button key={project.id} onClick={() => selectShowroomProject(project)} aria-label={`Open ${project.collectionLabel} concept ${project.index}: ${project.title}`}>
                 <b>{project.index}</b><span>{project.title}</span>
               </button>
             ))}
-          </div>
+          </div> : activeShowroomCollection?.emptyState && <div className="showroom-empty-state"><b>{activeShowroomCollection.emptyState.heading}</b><span>{activeShowroomCollection.emptyState.description}</span></div>}
         </aside>
       )}
+      {room.id === 'lobby' && <ArrivalLayer onNavigate={navigateToRoom} onSelect={selectMuseumItem} />}
+      {room.id === 'gallery' && <ImageLayer reducedMotion={reducedMotion} onSelect={selectMuseumItem} />}
+      {room.id === 'films' && <MotionLayer reducedMotion={reducedMotion} onSelect={selectMuseumItem} />}
+      {room.id === 'lab' && <LabLayer />}
       {debug && <aside className="debug-panel">DEBUG<br />WAYPOINT: {room.id}<br />QUALITY: {quality}<br />ROOM: {roomIndex + 1}/{rooms.length}</aside>}
       <CollectionModal selection={selection} onClose={() => setSelection(null)} onNavigateShowroom={selectShowroomProject} />
       <LoadingScreen progress={progress} visible={loading} />

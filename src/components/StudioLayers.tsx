@@ -6,6 +6,7 @@ import { videos } from '../content/videos'
 import type { RoomId, Selection } from '../content/types'
 import { CommercialContentWall } from './CommercialContentWall'
 import { DemoLab } from './DemoLab'
+import { GenerationLab } from './GenerationLab'
 import { TalentRoster } from './TalentRoster'
 
 type Navigate = (room: RoomId, collection?: string) => void
@@ -37,29 +38,29 @@ function MinimalProjectList({ items, onSelect, label }: { items: typeof images |
   return <div className="minimal-project-list" aria-label={label}>{items.map((item) => <button key={item.id} onClick={() => onSelect('image' in item ? { type: 'artwork', item } : { type: 'video', item })}><span>{item.category}</span><b>{item.title}</b></button>)}</div>
 }
 
-export function ImageLayer({ reducedMotion, onSelect }: { reducedMotion: boolean; onSelect: (selection: Selection) => void }) {
+export function ImageLayer({ reducedMotion, onSelect, onOpenStudy }: { reducedMotion: boolean; onSelect: (selection: Selection) => void; onOpenStudy: (studyId: string) => void }) {
   const [view, setView] = useState<'selected' | 'talent' | 'systems'>('selected')
   return <aside className="studio-layer room-program-layer" aria-label="Image room programmes">
     <LayerTabs active={view} onChange={setView} items={[{ id: 'selected', label: 'Selected Work' }, { id: 'talent', label: 'AI Talent' }, { id: 'systems', label: 'Content Systems' }]} />
     {view === 'selected' && <MinimalProjectList items={images} label="Selected image work" onSelect={onSelect} />}
     {view === 'talent' && <TalentRoster onSelect={(item) => onSelect({ type: 'talent', item })} />}
-    {view === 'systems' && <CommercialContentWall mode="static" reducedMotion={reducedMotion} onSelect={(item) => onSelect({ type: 'commercial', item })} />}
+    {view === 'systems' && <CommercialContentWall mode="static" reducedMotion={reducedMotion} onSelect={(item) => onSelect({ type: 'commercial', item })} onOpenStudy={onOpenStudy} />}
   </aside>
 }
 
-export function MotionLayer({ reducedMotion, onSelect }: { reducedMotion: boolean; onSelect: (selection: Selection) => void }) {
+export function MotionLayer({ reducedMotion, onSelect, onOpenStudy }: { reducedMotion: boolean; onSelect: (selection: Selection) => void; onOpenStudy: (studyId: string) => void }) {
   const [view, setView] = useState<'selected' | 'systems'>('selected')
   return <aside className="studio-layer room-program-layer" aria-label="Motion room programmes">
     <LayerTabs active={view} onChange={setView} items={[{ id: 'selected', label: 'Selected Motion' }, { id: 'systems', label: 'Content Systems' }]} />
     {view === 'selected' && <MinimalProjectList items={videos} label="Selected motion work" onSelect={onSelect} />}
-    {view === 'systems' && <CommercialContentWall mode="motion" reducedMotion={reducedMotion} onSelect={(item) => onSelect({ type: 'commercial', item })} />}
+    {view === 'systems' && <CommercialContentWall mode="motion" reducedMotion={reducedMotion} onSelect={(item) => onSelect({ type: 'commercial', item })} onOpenStudy={onOpenStudy} />}
   </aside>
 }
 
-export function LabLayer() {
-  const [view, setView] = useState<'demo' | 'pipeline'>('demo')
+export function LabLayer({ onOpenStudy }: { onOpenStudy: (studyId: string) => void }) {
+  const [view, setView] = useState<'pipeline' | 'generation' | 'demo'>('generation')
   return <aside className="studio-layer lab-program-layer" aria-label="AI lab programmes">
-    <LayerTabs active={view} onChange={setView} items={[{ id: 'demo', label: 'AI Demo Lab' }, { id: 'pipeline', label: 'Production Pipeline' }]} />
-    {view === 'demo' ? <DemoLab /> : <section className="pipeline-panel"><p className="eyebrow">Capabilities / Production pipeline</p><h2>From idea to production system.</h2><ol>{productionPipeline.map((step) => <li key={step}>{step}</li>)}</ol></section>}
+    <LayerTabs active={view} onChange={setView} items={[{ id: 'pipeline', label: 'How We Build' }, { id: 'generation', label: 'Generation Lab' }, { id: 'demo', label: 'Live Demo' }]} />
+    {view === 'demo' ? <DemoLab /> : view === 'generation' ? <GenerationLab onOpenStudy={onOpenStudy} /> : <section className="pipeline-panel"><p className="eyebrow">Capabilities / Production pipeline</p><h2>From idea to production system.</h2><ol>{productionPipeline.map((step) => <li key={step}>{step}</li>)}</ol></section>}
   </aside>
 }

@@ -1,8 +1,11 @@
 import { lazy, Suspense, useEffect, useRef, useState, type PointerEvent, type WheelEvent } from 'react'
 import { CollectionModal } from './components/CollectionModal'
 import { FallbackCollection } from './components/FallbackCollection'
+import { GenerationStudyModal } from './components/GenerationStudyModal'
 import { LoadingScreen } from './components/LoadingScreen'
 import { ArrivalLayer, ImageLayer, LabLayer, MotionLayer } from './components/StudioLayers'
+import { commercialContentById } from './content/commercial'
+import { generationStudyById } from './content/generationStudies'
 import { projectsForShowroomCollection, showroomCollections } from './content/showroom'
 import { rooms, site } from './content/site'
 import type { RoomId, Selection } from './content/types'
@@ -24,6 +27,7 @@ const webglSupported = () => {
 function App() {
   const [roomIndex, setRoomIndex] = useState(0)
   const [selection, setSelection] = useState<Selection | null>(null)
+  const [generationStudyId, setGenerationStudyId] = useState<string | null>(null)
   const [showroomCollectionId, setShowroomCollectionId] = useState(showroomCollections[0]?.id ?? '')
   const [quality, setQuality] = useState<Quality>(() => detectQuality())
   const [loading, setLoading] = useState(true)
@@ -38,6 +42,7 @@ function App() {
   const room = rooms[roomIndex]
   const activeShowroomCollection = showroomCollections.find((collection) => collection.id === showroomCollectionId) ?? showroomCollections[0]
   const activeShowroomProjects = activeShowroomCollection ? projectsForShowroomCollection(activeShowroomCollection.id) : []
+  const activeGenerationStudy = generationStudyId ? generationStudyById(generationStudyId) ?? null : null
 
   useEffect(() => {
     const first = window.setTimeout(() => setProgress(52), 260)
@@ -47,8 +52,11 @@ function App() {
 
   useEffect(() => {
     const onKeyDown = (event: KeyboardEvent) => {
-      if (selection) {
-        if (event.key === 'Escape') setSelection(null)
+      if (selection || activeGenerationStudy) {
+        if (event.key === 'Escape') {
+          setSelection(null)
+          setGenerationStudyId(null)
+        }
         return
       }
       if (event.key === 'ArrowDown' || event.key === 'ArrowRight' || event.key === 'PageDown') setRoomIndex((index) => clampRoom(index + 1))
@@ -56,7 +64,7 @@ function App() {
     }
     window.addEventListener('keydown', onKeyDown)
     return () => window.removeEventListener('keydown', onKeyDown)
-  }, [selection])
+  }, [selection, activeGenerationStudy])
 
   const changeRoom = (direction: number) => setRoomIndex((index) => clampRoom(index + direction))
 
@@ -65,25 +73,40 @@ function App() {
     if (nextIndex >= 0) setRoomIndex(nextIndex)
     if (collectionId) setShowroomCollectionId(collectionId)
     setSelection(null)
+    setGenerationStudyId(null)
   }
 
   const selectShowroomCollection = (collectionId: string) => {
     setSelection(null)
+    setGenerationStudyId(null)
     setShowroomCollectionId(collectionId)
   }
 
   const selectShowroomProject = (project: Extract<Selection, { type: 'showroom' }>['item']) => {
     setShowroomCollectionId(project.collection)
+    setGenerationStudyId(null)
     setSelection({ type: 'showroom', item: project })
   }
 
   const selectMuseumItem = (nextSelection: Selection) => {
     if (nextSelection.type === 'showroom') setShowroomCollectionId(nextSelection.item.collection)
+    setGenerationStudyId(null)
     setSelection(nextSelection)
   }
 
+  const openGenerationStudy = (studyId: string) => {
+    setSelection(null)
+    setGenerationStudyId(studyId)
+  }
+
+  const openCommercialFromStudy = (campaignId: string) => {
+    const campaign = commercialContentById(campaignId)
+    setGenerationStudyId(null)
+    if (campaign) setSelection({ type: 'commercial', item: campaign })
+  }
+
   const onWheel = (event: WheelEvent<HTMLDivElement>) => {
-    if (selection || Math.abs(event.deltaY) < 18 || Date.now() - wheelLock.current < 750) return
+    if (selection || activeGenerationStudy || Math.abs(event.deltaY) < 18 || Date.now() - wheelLock.current < 750) return
     wheelLock.current = Date.now()
     changeRoom(event.deltaY > 0 ? 1 : -1)
   }
@@ -93,7 +116,7 @@ function App() {
   }
 
   if (!webgl) {
-    return <><FallbackCollection onSelect={setSelection} /><CollectionModal selection={selection} onClose={() => setSelection(null)} /></>
+    return <><FallbackCollection onSelect={selectMuseumItem} onOpenStudy={openGenerationStudy} /><CollectionModal selection={selection} onClose={() => setSelection(null)} onOpenGenerationStudy={openGenerationStudy} /><GenerationStudyModal study={activeGenerationStudy} onClose={() => setGenerationStudyId(null)} onViewFinal={openCommercialFromStudy} /></>
   }
 
   return (
@@ -105,7 +128,7 @@ function App() {
       onTouchEnd={(event) => {
         if (touchStart.current === null) return
         const distance = touchStart.current - (event.changedTouches[0]?.clientY ?? touchStart.current)
-        if (Math.abs(distance) > 36 && !selection) changeRoom(distance > 0 ? 1 : -1)
+        if (Math.abs(distance) > 36 && !selection && !activeGenerationStudy) changeRoom(distance > 0 ? 1 : -1)
         touchStart.current = null
       }}
     >
@@ -170,11 +193,12 @@ function App() {
         </aside>
       )}
       {room.id === 'lobby' && <ArrivalLayer onNavigate={navigateToRoom} onSelect={selectMuseumItem} />}
-      {room.id === 'gallery' && <ImageLayer reducedMotion={reducedMotion} onSelect={selectMuseumItem} />}
-      {room.id === 'films' && <MotionLayer reducedMotion={reducedMotion} onSelect={selectMuseumItem} />}
-      {room.id === 'lab' && <LabLayer />}
+      {room.id === 'gallery' && <ImageLayer reducedMotion={reducedMotion} onSelect={selectMuseumItem} onOpenStudy={openGenerationStudy} />}
+      {room.id === 'films' && <MotionLayer reducedMotion={reducedMotion} onSelect={selectMuseumItem} onOpenStudy={openGenerationStudy} />}
+      {room.id === 'lab' && <LabLayer onOpenStudy={openGenerationStudy} />}
       {debug && <aside className="debug-panel">DEBUG<br />WAYPOINT: {room.id}<br />QUALITY: {quality}<br />ROOM: {roomIndex + 1}/{rooms.length}</aside>}
-      <CollectionModal selection={selection} onClose={() => setSelection(null)} onNavigateShowroom={selectShowroomProject} />
+      <CollectionModal selection={selection} onClose={() => setSelection(null)} onNavigateShowroom={selectShowroomProject} onOpenGenerationStudy={openGenerationStudy} />
+      <GenerationStudyModal study={activeGenerationStudy} onClose={() => setGenerationStudyId(null)} onViewFinal={openCommercialFromStudy} />
       <LoadingScreen progress={progress} visible={loading} />
     </main>
   )

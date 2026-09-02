@@ -126,20 +126,60 @@ export type DigitalTalent = {
   featured?: boolean
 }
 
-export type CommercialContentCategory = 'food' | 'drink' | 'ugc' | 'item'
+export type CommercialContentCategory = 'food' | 'drink' | 'product' | 'ugc'
+
+export type CommercialMotion = {
+  duration?: string
+  model?: string
+  poster?: string
+  videoUrl?: string
+  youtubeId?: string
+  demo?: boolean
+}
 
 export type CommercialContentItem = {
   id: string
-  title?: string
+  slug: string
+  title: string
   category: CommercialContentCategory
-  poster: string
-  videoUrl?: string
-  youtubeId?: string
-  duration?: string
-  tags: string[]
+  shortDescription: string
+  hero: {
+    src: string
+    alt: string
+  }
+  prompt: string
+  motion?: CommercialMotion
+  studyId?: string
+  tags?: string[]
   featured?: boolean
   latest?: boolean
   latestType?: LatestType
+  demo: boolean
+}
+
+export type GenerationQuality = 'standard' | 'high' | 'ultra'
+
+export type GenerationVariant = {
+  id: string
+  model: string
+  modelLabel: string
+  quality: GenerationQuality
+  image: string
+  costCredits: number
+  evaluation: string
+  demo: true
+}
+
+export type GenerationStudy = {
+  id: string
+  campaignId: string
+  title: string
+  category: CommercialContentCategory
+  prompt: string
+  selectedVariantId: string
+  summary: string
+  variants: GenerationVariant[]
+  demo: true
 }
 
 export type Selection =

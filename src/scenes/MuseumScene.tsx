@@ -182,7 +182,7 @@ function Terminal({ item, position, onSelect }: { item: Resource; position: [num
 }
 
 function LabRoom({ onSelect }: { onSelect: (item: Resource) => void }) {
-  return <group>{tutorials.map((item, index) => <Terminal key={item.id} item={item} position={anchorPosition(labAnchors[index])} onSelect={() => onSelect(item)} />)}<Text position={[0, 6.65, -40.75]} fontSize={0.13} color="#a8c8b4" letterSpacing={0.18} anchorX="center">AI DEMO LAB / PRODUCTION PIPELINE</Text></group>
+  return <group>{tutorials.map((item, index) => <Terminal key={item.id} item={item} position={anchorPosition(labAnchors[index])} onSelect={() => onSelect(item)} />)}<Text position={[0, 6.65, -40.75]} fontSize={0.13} color="#a8c8b4" letterSpacing={0.18} anchorX="center">AI LAB / GENERATION STUDIES / PRODUCTION PIPELINE</Text></group>
 }
 
 function Lobby() {

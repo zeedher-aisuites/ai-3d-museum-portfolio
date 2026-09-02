@@ -1,47 +1,43 @@
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import { commercialContent } from '../content/commercial'
-import { assetUrl, type CommercialContentItem } from '../content/types'
+import { assetUrl, type CommercialContentCategory, type CommercialContentItem } from '../content/types'
 
 type CommercialContentWallProps = {
   mode: 'static' | 'motion'
   reducedMotion: boolean
   onSelect: (item: CommercialContentItem) => void
+  onOpenStudy: (studyId: string) => void
 }
 
-export function CommercialContentWall({ mode, reducedMotion, onSelect }: CommercialContentWallProps) {
-  const [previewId, setPreviewId] = useState<string | null>(null)
-  const hasItems = commercialContent.length > 0
+const filters: { id: 'all' | CommercialContentCategory; label: string }[] = [
+  { id: 'all', label: 'All' },
+  { id: 'food', label: 'Food' },
+  { id: 'drink', label: 'Drink' },
+  { id: 'product', label: 'Product' },
+  { id: 'ugc', label: 'UGC' },
+]
 
-  if (!hasItems) {
-    return (
-      <div className="content-empty-state">
-        <p className="eyebrow">Commercial content systems / {mode}</p>
-        <strong>{mode === 'static' ? 'Campaign poster system ready.' : 'Motion pairing ready.'}</strong>
-        <p>Approved food, drink, UGC and item concepts will be added as a single static → motion record, never as unrelated duplicate projects.</p>
-      </div>
-    )
-  }
+export function CommercialContentWall({ mode, reducedMotion, onSelect, onOpenStudy }: CommercialContentWallProps) {
+  const [filter, setFilter] = useState<'all' | CommercialContentCategory>('all')
+  const visibleItems = useMemo(() => commercialContent.filter((item) => filter === 'all' || item.category === filter), [filter])
 
   return (
-    <div className="commercial-wall" aria-label={`Commercial content ${mode}`}>
-      {commercialContent.map((item) => {
-        const previewable = mode === 'motion' && Boolean(item.videoUrl) && previewId === item.id && !reducedMotion
-        return (
-          <button
-            key={item.id}
-            className="commercial-card"
-            onPointerEnter={() => { if (!reducedMotion) setPreviewId(item.id) }}
-            onPointerLeave={() => setPreviewId(null)}
-            onFocus={() => { if (!reducedMotion) setPreviewId(item.id) }}
-            onBlur={() => setPreviewId(null)}
-            onClick={() => onSelect(item)}
-            aria-label={`Open ${item.title || `${item.category} commercial concept`}`}
-          >
-            {previewable ? <video src={assetUrl(item.videoUrl!)} muted playsInline loop autoPlay preload="none" poster={assetUrl(item.poster)} /> : <img src={assetUrl(item.poster)} alt={item.title || `${item.category} commercial concept`} loading="lazy" />}
-            <span>{item.category} / {mode === 'static' ? 'static' : item.videoUrl ? 'motion preview' : 'motion ready'}</span>
+    <section className={`commercial-content-system${reducedMotion ? ' reduced' : ''}`} aria-label={`Commercial content ${mode}`}>
+      <header className="commercial-system-header"><p className="eyebrow">Commercial Content Systems / {mode === 'static' ? 'final visuals' : 'motion direction'}</p><p>{mode === 'static' ? 'Client-facing campaign results. Each image can lead to a prompt, motion brief and review trail.' : 'Motion is a planned extension of the selected final visual — never a fabricated video preview.'}</p></header>
+      <nav className="commercial-filter-tabs" aria-label="Filter commercial content">
+        {filters.map((item) => <button key={item.id} className={filter === item.id ? 'active' : ''} onClick={() => setFilter(item.id)} aria-pressed={filter === item.id}>{item.label}</button>)}
+      </nav>
+      {visibleItems.length ? <div className="commercial-wall">
+        {visibleItems.map((item) => <article key={item.id} className="commercial-card">
+          <button className="commercial-card-media" onClick={() => onSelect(item)} aria-label={`View project: ${item.title}`}>
+            <img src={assetUrl(item.hero.src)} alt={item.hero.alt} loading="lazy" />
+            <span className="commercial-demo-badge">Synthetic demo</span>
           </button>
-        )
-      })}
-    </div>
+          <div className="commercial-card-copy"><p>{item.category} / final visual</p><h3>{item.title}</h3><span>{item.shortDescription}</span><small>{mode === 'motion' ? 'Motion coming with final asset' : 'Prompt and process available'}</small>
+            <div className="commercial-card-actions"><button onClick={() => onSelect(item)}>View project</button>{item.studyId && <button onClick={() => { if (item.studyId) onOpenStudy(item.studyId) }}>Open process</button>}</div>
+          </div>
+        </article>)}
+      </div> : <div className="content-empty-state"><p className="eyebrow">{filter} / library status</p><strong>Collection in development.</strong><p>This view is ready for approved work; the current public demo set is food.</p></div>}
+    </section>
   )
 }

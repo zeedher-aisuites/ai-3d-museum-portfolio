@@ -11,7 +11,7 @@ The six-room museum remains the presentation shell. New capabilities live in dat
 | `00 / ARRIVAL` | **What We Build** capability index and **Now Shipping** editorial highlights. |
 | `01 / IMAGE` | Selected Work, AI Talent casting roster, and Commercial Content Systems — Static. |
 | `02 / MOTION` | Selected Motion and Commercial Content Systems — Motion. |
-| `03 / AI LAB` | AI Demo Lab frontend and client-facing Production Pipeline. |
+| `03 / AI LAB` | How We Build, Generation Lab studies, and the AI Demo Lab frontend. |
 | `04 / SHOWROOM` | Hospitality, Real Estate, Micro Stories, and Original Worlds. |
 | `05 / CONTACT` | Work With Us: campaign, ongoing content, or AI system. |
 
@@ -40,7 +40,8 @@ npm run build
 | Selected image work | `src/content/images.ts` | `public/portfolio/images/` |
 | Selected motion work | `src/content/videos.ts` | `public/portfolio/thumbnails/`, `public/portfolio/videos/` |
 | AI Talent roster | `src/content/talent.ts` | `public/portfolio/talent/<talent-id>/` |
-| Commercial static → motion pairs | `src/content/commercial.ts` | `public/portfolio/commercial/<concept-id>/` |
+| Commercial campaigns | `src/content/commercial.ts` | `public/portfolio/commercial/food/<campaign-id>/` |
+| Generation Lab benchmark studies | `src/content/generationStudies.ts` | `public/portfolio/commercial/food/<campaign-id>/studies/` |
 | AI Lab systems | `src/content/tutorials.ts` | n/a |
 | Capability index and production pipeline | `src/content/capabilities.ts` | n/a |
 | Latest / Now Shipping lens | `src/content/latest.ts` | derived; no duplicate metadata |
@@ -58,7 +59,7 @@ latest?: boolean
 latestType?: 'film' | 'story' | 'experiment'
 ```
 
-The current records surface the latest Hospitality film, Micro Story, and campaign-image-system experiment.
+The current records surface the latest Hospitality film and Micro Story. The demo campaigns deliberately do not flood the high-level editorial feed.
 
 ### Selected Work
 
@@ -101,32 +102,51 @@ Use optimized WebP/AVIF portraits, descriptive alt-ready names in data, and publ
 
 ## Commercial Content Systems
 
-One `CommercialContentItem` is one commercial concept, not two unrelated portfolio records. It pairs poster → motion → campaign-ready delivery.
+`Commercial Content Systems` is a client-facing result layer in IMAGE and MOTION. It currently launches with six local, original synthetic food campaigns:
+
+- EMBER BURGER
+- NOCHE TACOS
+- FORNO PIZZA
+- MIDNIGHT RAMEN
+- FIRE CUT
+- NOIR CHOCOLATE
+
+Each `CommercialContentItem` contains the final 16:9 WebP, accessible alt text, campaign description, copyable visible prompt, optional process-study link, tags, and an honest motion state. It is not a second portfolio record for the same idea.
 
 ```ts
 type CommercialContentItem = {
   id: string
-  title?: string
-  category: 'food' | 'drink' | 'ugc' | 'item'
-  poster: string
-  videoUrl?: string
-  youtubeId?: string
-  duration?: string
-  tags: string[]
-  featured?: boolean
+  slug: string
+  title: string
+  category: 'food' | 'drink' | 'product' | 'ugc'
+  shortDescription: string
+  hero: { src: string; alt: string }
+  prompt: string
+  motion?: { duration?: string; model?: string; videoUrl?: string; youtubeId?: string; demo?: boolean }
+  studyId?: string
+  tags?: string[]
+  demo: boolean
 }
 ```
 
-The static and motion walls are intentionally empty until approved assets arrive. When records are added, posters use native lazy loading. Native motion previews mount only for the currently hovered/focused card, are muted/inline/looped, unmount on exit, and remain disabled under `prefers-reduced-motion`. Touch opens the same project overlay instead. Never preload a wall of videos or add placeholder commercial work.
+All six current records use `demo: true` and are visibly labelled **Synthetic demo**. The motion message is **Motion coming with final asset**: no video was invented, no player is mounted and no Seedance output is represented as real. When a real public motion master exists, add its optimized local video or YouTube ID to `motion`; load it only after a deliberate user action.
 
 ### Commercial asset convention
 
 ```text
-public/portfolio/commercial/<concept-id>/poster.webp
-public/portfolio/commercial/<concept-id>/motion.mp4
+public/portfolio/commercial/food/<campaign-id>/hero.webp
+public/portfolio/commercial/food/<campaign-id>/studies/model-a-standard.webp
 ```
 
-Example data paths: `portfolio/commercial/citrus-soda/poster.webp` and `portfolio/commercial/citrus-soda/motion.mp4`. Keep motion files short, muted-preview-ready, and web-optimized; use YouTube when the public master belongs on YouTube.
+The checked-in WebP set contains exactly six final heroes and the 27 variants used by the three benchmark studies. Do not replace these with stock media or make real-client claims from the demo data.
+
+## Generation Lab
+
+Generation Lab lives inside `03 / AI LAB`; it is not a seventh museum room or a second client-facing campaign library. Its internal navigation is **How We Build**, **Generation Lab**, and **Live Demo**.
+
+The first three public studies — EMBER BURGER, NOCHE TACOS and NOIR CHOCOLATE — each expose a responsive 3 × 3 comparison of demo-only `Model A`, `Model B`, and `Model C` at `Standard`, `High`, and `Ultra` quality. The UI derives model groups and quality cards from data, and labels the made-up cost values as `1`, `2`, and `4` **DEMO CREDITS**. It must never present these values as provider pricing, benchmarks, APIs or live generation results.
+
+The overlay shows the final campaign cross-link, copyable prompt, the selected direction, and evaluation language for framing, material response, atmosphere, and campaign fit. The final campaign overlay returns to Final / Prompt / Process views.
 
 ## AI Demo Lab
 
@@ -240,11 +260,11 @@ No CRM, authentication, database, or analytics is included. Replace `studio@exam
 ## Performance and accessibility
 
 - The initial museum remains lazy-loaded and keeps the existing GLB/procedural fallback.
-- Talent and commercial images use lazy loading. Commercial preview videos mount only on intent.
+- Talent, commercial hero and Generation Lab variant images use lazy loading.
 - YouTube iframes mount only in explicit project overlays.
 - Native controls, visible focus styles, labels, and buttons preserve keyboard and touch use; hover is never the sole activation path.
 - `prefers-reduced-motion` continues to reduce camera/interface motion and disables commercial hover playback.
-- The no-WebGL fallback exposes image, motion, talent, commercial-system readiness, Demo Lab, production pipeline, showroom collections, and Work With Us routes.
+- The no-WebGL fallback exposes image, motion, talent, all commercial campaigns, Generation Lab, Demo Lab, production pipeline, showroom collections, and Work With Us routes.
 
 ## Production build and GitHub Pages
 
@@ -258,7 +278,7 @@ The Vite base path comes from `VITE_REPOSITORY_NAME`; `assetUrl()` keeps public-
 ## Current intentional asset gaps
 
 - AI Talent portraits and optional motion/voice material have not yet been supplied.
-- Food/drink commercial posters and their short motion counterparts have not yet been supplied.
+- Real motion masters for the six commercial demo campaigns have not yet been supplied; the UI therefore does not pretend to play a video.
 - Original Worlds series assets have not yet been supplied.
 - The Demo Lab backend is not connected unless `VITE_DEMO_API_URL` is configured.
 

@@ -1,12 +1,14 @@
 import { AnimatePresence, motion } from 'framer-motion'
-import { useEffect, useRef, type CSSProperties } from 'react'
+import { useEffect, useRef, useState, type CSSProperties } from 'react'
 import { projectsForShowroomCollection } from '../content/showroom'
 import { assetUrl, type ProjectBreakdown, type Selection, type ShowroomProject } from '../content/types'
+import { PromptViewer } from './PromptViewer'
 
 type CollectionModalProps = {
   selection: Selection | null
   onClose: () => void
   onNavigateShowroom?: (project: ShowroomProject) => void
+  onOpenGenerationStudy?: (studyId: string) => void
 }
 
 const mediaUrl = (url: string) => /^(https?:)?\/\//.test(url) ? url : assetUrl(url)
@@ -23,8 +25,10 @@ function Breakdown({ item }: { item: ProjectBreakdown }) {
   </div>
 }
 
-export function CollectionModal({ selection, onClose, onNavigateShowroom }: CollectionModalProps) {
+export function CollectionModal({ selection, onClose, onNavigateShowroom, onOpenGenerationStudy }: CollectionModalProps) {
   const closeRef = useRef<HTMLButtonElement>(null)
+  const [commercialView, setCommercialView] = useState<'final' | 'prompt' | 'process'>('final')
+  const [commercialMotionRequested, setCommercialMotionRequested] = useState(false)
   const selectionTitle = selection?.type === 'talent' ? selection.item.name : selection?.item.title
   const activeShowroom = selection?.type === 'showroom' ? selection.item : null
   const showroomSeries = activeShowroom ? projectsForShowroomCollection(activeShowroom.collection) : []
@@ -37,7 +41,11 @@ export function CollectionModal({ selection, onClose, onNavigateShowroom }: Coll
   }
 
   useEffect(() => {
-    if (selection) window.requestAnimationFrame(() => closeRef.current?.focus())
+    if (selection) {
+      setCommercialView('final')
+      setCommercialMotionRequested(false)
+      window.requestAnimationFrame(() => closeRef.current?.focus())
+    }
   }, [selection])
 
   return (
@@ -121,13 +129,15 @@ export function CollectionModal({ selection, onClose, onNavigateShowroom }: Coll
             {selection.type === 'commercial' && (
               <>
                 <div className="modal-visual video-visual">
-                  {selection.item.youtubeId ? <iframe src={`https://www.youtube-nocookie.com/embed/${selection.item.youtubeId}?playsinline=1&rel=0`} title={selection.item.title || 'Commercial content concept'} allow="encrypted-media; picture-in-picture; fullscreen" allowFullScreen /> : selection.item.videoUrl ? <video controls playsInline preload="metadata" poster={assetUrl(selection.item.poster)}><source src={mediaUrl(selection.item.videoUrl)} /></video> : <img src={assetUrl(selection.item.poster)} alt={selection.item.title || `${selection.item.category} commercial concept`} />}
+                  <img src={assetUrl(selection.item.hero.src)} alt={selection.item.hero.alt} />
                 </div>
                 <div className="modal-copy">
-                  <p className="eyebrow">Commercial content system / {selection.item.category}{selection.item.duration ? ` / ${selection.item.duration}` : ''}</p>
-                  <h2>{selection.item.title || 'Campaign-ready content concept'}</h2>
-                  <p>One paired production record for static, motion and campaign-ready delivery.</p>
-                  <div className="tool-list">{selection.item.tags.map((item) => <span key={item}>{item}</span>)}</div>
+                  <p className="eyebrow">Commercial content system / {selection.item.category} / synthetic demo</p>
+                  <h2>{selection.item.title}</h2>
+                  <nav className="commercial-modal-tabs" aria-label="Commercial project views"><button className={commercialView === 'final' ? 'active' : ''} onClick={() => setCommercialView('final')} aria-pressed={commercialView === 'final'}>Final</button><button className={commercialView === 'prompt' ? 'active' : ''} onClick={() => setCommercialView('prompt')} aria-pressed={commercialView === 'prompt'}>Prompt</button>{selection.item.studyId && <button className={commercialView === 'process' ? 'active' : ''} onClick={() => setCommercialView('process')} aria-pressed={commercialView === 'process'}>Process</button>}</nav>
+                  {commercialView === 'final' && <><p>{selection.item.shortDescription}</p><p className="modal-note">{selection.item.motion ? `Motion coming with final asset${selection.item.motion.duration ? ` / ${selection.item.motion.duration} planned test` : ''}.` : 'Final still visual.'}</p>{selection.item.motion?.youtubeId || selection.item.motion?.videoUrl ? <><button type="button" className="resource-button" onClick={() => setCommercialMotionRequested(true)}>Watch motion</button>{commercialMotionRequested && <div className="commercial-motion-player">{selection.item.motion.youtubeId ? <iframe src={`https://www.youtube-nocookie.com/embed/${selection.item.motion.youtubeId}?playsinline=1&rel=0`} title={`${selection.item.title} motion`} allow="encrypted-media; picture-in-picture; fullscreen" allowFullScreen /> : selection.item.motion.videoUrl ? <video controls playsInline preload="metadata" poster={selection.item.motion.poster ? assetUrl(selection.item.motion.poster) : undefined}><source src={mediaUrl(selection.item.motion.videoUrl)} /></video> : null}</div>}</> : null}{selection.item.tags && <div className="tool-list">{selection.item.tags.map((item) => <span key={item}>{item}</span>)}</div>}</>}
+                  {commercialView === 'prompt' && <PromptViewer prompt={selection.item.prompt} compact />}
+                  {commercialView === 'process' && selection.item.studyId && <section className="commercial-process"><p>Inspect the synthetic variants, quality settings and demo-credit assumptions behind this chosen direction.</p><button type="button" className="resource-button" onClick={() => onOpenGenerationStudy?.(selection.item.studyId!)}>Open generation study →</button></section>}
                 </div>
               </>
             )}

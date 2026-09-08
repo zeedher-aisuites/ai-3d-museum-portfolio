@@ -2,6 +2,10 @@
 
 ATELIER is a static-first interactive 3D portfolio for a creative studio, AI production system, narrative lab, digital talent studio, automation/product lab, and original-IP practice. It is built with React, Vite, Three.js, React Three Fiber, Drei, and Framer Motion, and deploys to GitHub Pages without a database, tracking, authentication, or frontend secrets.
 
+## Entry points
+
+The default URL (including an empty or unrelated hash) opens José Eduardo Hernández's recruiter-facing entry. `#/atelier` opens the immersive ATELIER 3D portfolio. Recruiter-specific content lives in `src/content/recruiter.ts`; legacy ATELIER content remains in its existing content modules.
+
 ## Information architecture
 
 The six-room museum remains the presentation shell. New capabilities live in data-driven editorial layers, overlays, and the accessible fallback rather than additional 3D rooms.

@@ -6,10 +6,13 @@ export const site = {
   intro: 'We direct, produce at scale, and build the technology around production.',
   contact: {
     headline: 'WORK WITH US',
-    email: 'studio@example.com',
+    email: 'zeedher.ia@gmail.com',
+    phone: '+52 771 750 8350',
+    phoneHref: 'tel:+527717508350',
+    whatsapp: 'https://wa.me/527717508350',
     instagram: '',
-    linkedin: '',
-    isPlaceholder: true,
+    linkedin: 'https://www.linkedin.com/in/jose-eduardo-hernandez-26082380',
+    isPlaceholder: false,
     routes: [
       { label: 'I need a campaign', subject: 'I need a campaign', description: 'Commercials, hospitality, real estate, launches and branded storytelling.' },
       { label: 'I need ongoing content', subject: 'I need ongoing content', description: 'Social media, UGC, AI talent, food and beverage, and recurring creative production.' },

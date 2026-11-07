@@ -169,6 +169,12 @@ function App() {
           {site.contact.routes.map((route) => (
             <a key={route.label} href={`mailto:${site.contact.email}?subject=${encodeURIComponent(route.subject)}`}><b>{route.label}</b><span>{route.description}</span></a>
           ))}
+          <div className="contact-links">
+            <a href={`mailto:${site.contact.email}`}>Email</a>
+            <a href={site.contact.phoneHref}>{site.contact.phone}</a>
+            <a href={site.contact.whatsapp} target="_blank" rel="noreferrer">WhatsApp</a>
+            <a href={site.contact.linkedin} target="_blank" rel="noreferrer">LinkedIn</a>
+          </div>
           {site.contact.isPlaceholder && <small>Replace contact details in src/content/site.ts</small>}
         </aside>
       )}

@@ -3,13 +3,23 @@ import { capabilityIndex, productionPipeline } from '../content/capabilities'
 import { latestHighlights } from '../content/latest'
 import { images } from '../content/images'
 import { videos } from '../content/videos'
-import type { RoomId, Selection } from '../content/types'
+import { assetUrl, type RoomId, type Selection } from '../content/types'
 import { CommercialContentWall } from './CommercialContentWall'
 import { DemoLab } from './DemoLab'
 import { GenerationLab } from './GenerationLab'
 import { TalentRoster } from './TalentRoster'
 
 type Navigate = (room: RoomId, collection?: string) => void
+
+function latestImage(selection: Selection): string | null {
+  switch (selection.type) {
+    case 'showroom': return selection.item.hero.thumbnail
+    case 'video': return selection.item.thumbnail
+    case 'artwork': return selection.item.image
+    case 'commercial': return selection.item.hero.src
+    default: return null
+  }
+}
 
 export function ArrivalLayer({ onNavigate, onSelect }: { onNavigate: Navigate; onSelect: (selection: Selection) => void }) {
   return (
@@ -23,7 +33,13 @@ export function ArrivalLayer({ onNavigate, onSelect }: { onNavigate: Navigate; o
       <section className="latest-panel">
         <p className="eyebrow">Now shipping</p>
         <div>
-          {latestHighlights.map((item) => <button key={item.id} onClick={() => { onNavigate(item.room, item.selection.type === 'showroom' ? item.selection.item.collection : undefined); onSelect(item.selection) }}><span>{item.label}</span><b>{item.selection.type === 'talent' ? item.selection.item.name : item.selection.item.title}</b></button>)}
+          {latestHighlights.map((item) => {
+            const image = latestImage(item.selection)
+            return <button key={item.id} onClick={() => { onNavigate(item.room, item.selection.type === 'showroom' ? item.selection.item.collection : undefined); onSelect(item.selection) }}>
+              {image && <img className="latest-thumb" src={assetUrl(image)} alt="" loading="lazy" />}
+              <span className="latest-copy"><span>{item.label}</span><b>{item.selection.type === 'talent' ? item.selection.item.name : item.selection.item.title}</b></span>
+            </button>
+          })}
         </div>
       </section>
     </aside>
@@ -35,7 +51,13 @@ function LayerTabs<T extends string>({ active, items, onChange }: { active: T; i
 }
 
 function MinimalProjectList({ items, onSelect, label }: { items: typeof images | typeof videos; onSelect: (selection: Selection) => void; label: string }) {
-  return <div className="minimal-project-list" aria-label={label}>{items.map((item) => <button key={item.id} onClick={() => onSelect('image' in item ? { type: 'artwork', item } : { type: 'video', item })}><span>{item.category}</span><b>{item.title}</b></button>)}</div>
+  return <div className="minimal-project-list" aria-label={label}>{items.map((item) => {
+    const thumb = 'image' in item ? item.image : item.thumbnail
+    return <button key={item.id} onClick={() => onSelect('image' in item ? { type: 'artwork', item } : { type: 'video', item })}>
+      <img className="minimal-project-thumb" src={assetUrl(thumb)} alt="" loading="lazy" />
+      <span className="minimal-project-copy"><span>{item.category}</span><b>{item.title}</b>{item.subtitle && <small>{item.subtitle}</small>}</span>
+    </button>
+  })}</div>
 }
 
 export function ImageLayer({ reducedMotion, onSelect, onOpenStudy }: { reducedMotion: boolean; onSelect: (selection: Selection) => void; onOpenStudy: (studyId: string) => void }) {

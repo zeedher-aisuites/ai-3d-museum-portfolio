@@ -6,19 +6,28 @@ import { TalentRoster } from './TalentRoster'
 import { images } from '../content/images'
 import { projectsForShowroomCollection, showroom, showroomCollections } from '../content/showroom'
 import { site } from '../content/site'
-import type { Selection } from '../content/types'
+import { assetUrl, type Selection } from '../content/types'
 import { tutorials } from '../content/tutorials'
 import { videos } from '../content/videos'
 
 export function FallbackCollection({ onSelect, onOpenStudy }: { onSelect: (selection: Selection) => void; onOpenStudy: (studyId: string) => void }) {
+  const featured = images.find((item) => item.featured) ?? images[0]
   return (
     <main className="fallback-collection">
       <header className="fallback-hero">
-        <p className="eyebrow">{site.descriptor} / 2026</p>
-        <h1>{site.name}</h1>
-        <p>{site.intro}</p>
-        <p className="fallback-note">This device is showing the accessible collection view.</p>
-        <div className="fallback-capability-index" aria-label="What ATELIER builds">{capabilityIndex.map((item) => <span key={item.id}>{item.label}</span>)}</div>
+        <div className="fallback-hero-copy">
+          <p className="eyebrow">{site.descriptor} / 2026</p>
+          <h1>{site.name}</h1>
+          <p>{site.intro}</p>
+          <p className="fallback-note">This device is showing the accessible collection view.</p>
+          <div className="fallback-capability-index" aria-label="What ATELIER builds">{capabilityIndex.map((item) => <span key={item.id}>{item.label}</span>)}</div>
+        </div>
+        {featured && (
+          <button type="button" className="fallback-hero-visual" onClick={() => onSelect({ type: 'artwork', item: featured })} aria-label={`View featured work: ${featured.title}`}>
+            <img src={assetUrl(featured.image)} alt={featured.title} />
+            <span className="fallback-hero-caption"><b>{featured.title}</b><i>{featured.project} / {featured.year}</i></span>
+          </button>
+        )}
       </header>
       <Collection title="Image Gallery" items={images} onSelect={(item) => onSelect({ type: 'artwork', item })} />
       <section className="fallback-section"><p className="eyebrow">AI Talent</p><h2>Digital casting roster</h2><TalentRoster onSelect={(item) => onSelect({ type: 'talent', item })} /></section>
@@ -44,6 +53,20 @@ export function FallbackCollection({ onSelect, onOpenStudy }: { onSelect: (selec
 
 type Selectable = typeof images[number] | typeof videos[number] | typeof tutorials[number] | typeof showroom[number]
 
+function cardImage(item: Selectable): string | null {
+  if ('image' in item) return item.image
+  if ('hero' in item) return item.hero.thumbnail
+  if ('thumbnail' in item) return item.thumbnail
+  return null
+}
+
+function cardMeta(item: Selectable): string | null {
+  if ('image' in item) return `${item.year} / ${item.project}`
+  if ('hero' in item) return `${item.index} / ${item.collectionLabel} / ${item.status}`
+  if ('thumbnail' in item) return [item.year, item.duration].filter(Boolean).join(' / ')
+  return item.status.replace('-', ' ')
+}
+
 function Collection<T extends Selectable>({ title, subtitle, items, onSelect }: { title: string; subtitle?: string; items: T[]; onSelect: (item: T) => void }) {
   return (
     <section className="fallback-section">
@@ -51,13 +74,25 @@ function Collection<T extends Selectable>({ title, subtitle, items, onSelect }: 
       <h2>{title}</h2>
       {subtitle && <p className="fallback-collection-subtitle">{subtitle}</p>}
       <div className="fallback-grid">
-        {items.map((item) => (
-          <button key={item.id} className="fallback-card" onClick={() => onSelect(item)}>
-            <span>{'category' in item ? item.category : `${item.index} / ${item.collectionLabel} / ${item.status}`}</span>
-            <strong>{item.title}</strong>
-            <small>{'project' in item ? item.project : 'summary' in item ? item.summary : item.description}</small>
-          </button>
-        ))}
+        {items.map((item) => {
+          const image = cardImage(item)
+          const meta = cardMeta(item)
+          return (
+            <button key={item.id} className={`fallback-card${image ? '' : ' fallback-card--text'}`} onClick={() => onSelect(item)}>
+              {image ? (
+                <span className="fallback-card-media"><img src={assetUrl(image)} alt={item.title} loading="lazy" /></span>
+              ) : (
+                <span className="fallback-card-media fallback-card-media--empty" aria-hidden="true">{item.title.charAt(0)}</span>
+              )}
+              <span className="fallback-card-copy">
+                <span>{'category' in item ? item.category : `${item.index} / ${item.collectionLabel} / ${item.status}`}</span>
+                <strong>{item.title}</strong>
+                <small>{'summary' in item ? item.summary : item.description}</small>
+                {meta && <span className="fallback-card-meta">{meta}</span>}
+              </span>
+            </button>
+          )
+        })}
       </div>
     </section>
   )

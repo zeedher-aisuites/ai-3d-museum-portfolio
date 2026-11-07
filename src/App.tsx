@@ -8,7 +8,7 @@ import { commercialContentById } from './content/commercial'
 import { generationStudyById } from './content/generationStudies'
 import { projectsForShowroomCollection, showroomCollections } from './content/showroom'
 import { rooms, site } from './content/site'
-import type { RoomId, Selection } from './content/types'
+import { assetUrl, type RoomId, type Selection } from './content/types'
 import { detectQuality, type Quality } from './utils/quality'
 
 const MuseumExperience = lazy(() => import('./scenes/MuseumExperience').then((module) => ({ default: module.MuseumExperience })))
@@ -186,7 +186,8 @@ function App() {
           {activeShowroomProjects.length > 0 ? <div className="showroom-collection-projects">
             {activeShowroomProjects.map((project) => (
               <button key={project.id} onClick={() => selectShowroomProject(project)} aria-label={`Open ${project.collectionLabel} concept ${project.index}: ${project.title}`}>
-                <b>{project.index}</b><span>{project.title}</span>
+                <img className="showroom-project-thumb" src={assetUrl(project.hero.thumbnail)} alt="" loading="lazy" />
+                <span className="showroom-project-copy"><b>{project.index}</b><span>{project.title}</span></span>
               </button>
             ))}
           </div> : activeShowroomCollection?.emptyState && <div className="showroom-empty-state"><b>{activeShowroomCollection.emptyState.heading}</b><span>{activeShowroomCollection.emptyState.description}</span></div>}

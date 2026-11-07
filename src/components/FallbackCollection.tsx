@@ -45,7 +45,12 @@ export function FallbackCollection({ onSelect, onOpenStudy }: { onSelect: (selec
         <p className="eyebrow">CONTACT</p>
         <h2>{site.contact.headline}</h2>
         <div className="fallback-contact-routes">{site.contact.routes.map((route) => <a key={route.label} href={`mailto:${site.contact.email}?subject=${encodeURIComponent(route.subject)}`}><b>{route.label}</b><span>{route.description}</span></a>)}</div>
-        <a href={`mailto:${site.contact.email}`}>{site.contact.email}</a>
+        <div className="fallback-contact-links">
+          <a href={`mailto:${site.contact.email}`}>{site.contact.email}</a>
+          <a href={site.contact.phoneHref}>{site.contact.phone}</a>
+          <a href={site.contact.whatsapp} target="_blank" rel="noreferrer">WhatsApp</a>
+          <a href={site.contact.linkedin} target="_blank" rel="noreferrer">LinkedIn</a>
+        </div>
       </footer>
     </main>
   )

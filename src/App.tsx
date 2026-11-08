@@ -34,7 +34,6 @@ function App() {
   const [progress, setProgress] = useState(12)
   const [pointer, setPointer] = useState<[number, number]>([0, 0])
   const [webgl] = useState(webglSupported)
-  const [soundEnabled, setSoundEnabled] = useState(false)
   const touchStart = useRef<number | null>(null)
   const wheelLock = useRef(0)
   const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
@@ -156,7 +155,6 @@ function App() {
         ))}
       </nav>
       <div className="museum-actions">
-        <button onClick={() => setSoundEnabled((value) => !value)} aria-pressed={soundEnabled}>{soundEnabled ? 'Sound on' : 'Enable sound'}</button>
         <label>Quality
           <select value={quality} onChange={(event) => setQuality(event.target.value as Quality)} aria-label="Rendering quality">
             <option value="low">Low</option><option value="medium">Medium</option><option value="high">High</option>
@@ -175,7 +173,6 @@ function App() {
             <a href={site.contact.whatsapp} target="_blank" rel="noreferrer">WhatsApp</a>
             <a href={site.contact.linkedin} target="_blank" rel="noreferrer">LinkedIn</a>
           </div>
-          {site.contact.isPlaceholder && <small>Replace contact details in src/content/site.ts</small>}
         </aside>
       )}
       {room.id === 'showroom' && (
@@ -201,7 +198,7 @@ function App() {
       )}
       {room.id === 'lobby' && <ArrivalLayer onNavigate={navigateToRoom} onSelect={selectMuseumItem} />}
       {room.id === 'gallery' && <ImageLayer reducedMotion={reducedMotion} onSelect={selectMuseumItem} onOpenStudy={openGenerationStudy} />}
-      {room.id === 'films' && <MotionLayer reducedMotion={reducedMotion} onSelect={selectMuseumItem} onOpenStudy={openGenerationStudy} />}
+      {room.id === 'films' && <MotionLayer onSelect={selectMuseumItem} />}
       {room.id === 'lab' && <LabLayer onOpenStudy={openGenerationStudy} />}
       {debug && <aside className="debug-panel">DEBUG<br />WAYPOINT: {room.id}<br />QUALITY: {quality}<br />ROOM: {roomIndex + 1}/{rooms.length}</aside>}
       <CollectionModal selection={selection} onClose={() => setSelection(null)} onNavigateShowroom={selectShowroomProject} onOpenGenerationStudy={openGenerationStudy} />

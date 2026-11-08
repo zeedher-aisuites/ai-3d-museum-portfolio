@@ -1,13 +1,10 @@
 import { capabilityIndex, productionPipeline } from '../content/capabilities'
 import { CommercialContentWall } from './CommercialContentWall'
-import { DemoLab } from './DemoLab'
 import { GenerationLab } from './GenerationLab'
-import { TalentRoster } from './TalentRoster'
 import { images } from '../content/images'
 import { projectsForShowroomCollection, showroom, showroomCollections } from '../content/showroom'
 import { site } from '../content/site'
 import { assetUrl, type Selection } from '../content/types'
-import { tutorials } from '../content/tutorials'
 import { videos } from '../content/videos'
 
 export function FallbackCollection({ onSelect, onOpenStudy }: { onSelect: (selection: Selection) => void; onOpenStudy: (studyId: string) => void }) {
@@ -30,13 +27,9 @@ export function FallbackCollection({ onSelect, onOpenStudy }: { onSelect: (selec
         )}
       </header>
       <Collection title="Image Gallery" items={images} onSelect={(item) => onSelect({ type: 'artwork', item })} />
-      <section className="fallback-section"><p className="eyebrow">AI Talent</p><h2>Digital casting roster</h2><TalentRoster onSelect={(item) => onSelect({ type: 'talent', item })} /></section>
-      <section className="fallback-section"><p className="eyebrow">Commercial Content Systems / Static</p><h2>Static → Motion → Campaign-ready</h2><CommercialContentWall mode="static" reducedMotion onSelect={(item) => onSelect({ type: 'commercial', item })} onOpenStudy={onOpenStudy} /></section>
+      <section className="fallback-section"><p className="eyebrow">Commercial Content Systems</p><h2>Static → Campaign-ready</h2><CommercialContentWall reducedMotion onSelect={(item) => onSelect({ type: 'commercial', item })} onOpenStudy={onOpenStudy} /></section>
       <Collection title="Moving Room" items={videos} onSelect={(item) => onSelect({ type: 'video', item })} />
-      <section className="fallback-section"><p className="eyebrow">Commercial Content Systems / Motion</p><h2>Motion pairing</h2><CommercialContentWall mode="motion" reducedMotion onSelect={(item) => onSelect({ type: 'commercial', item })} onOpenStudy={onOpenStudy} /></section>
-      <Collection title="Creative AI Lab" items={tutorials} onSelect={(item) => onSelect({ type: 'resource', item })} />
       <section className="fallback-section"><GenerationLab onOpenStudy={onOpenStudy} /></section>
-      <section className="fallback-section fallback-demo"><DemoLab /></section>
       <section className="fallback-section"><p className="eyebrow">Capabilities / Production Pipeline</p><h2>From idea to production system.</h2><ol className="fallback-pipeline">{productionPipeline.map((step) => <li key={step}>{step}</li>)}</ol></section>
       {showroomCollections.map((collection) => (
         <Collection key={collection.id} title={`${collection.label} / Showroom`} subtitle={collection.subtitle} items={projectsForShowroomCollection(collection.id)} onSelect={(item) => onSelect({ type: 'showroom', item })} />
@@ -56,7 +49,7 @@ export function FallbackCollection({ onSelect, onOpenStudy }: { onSelect: (selec
   )
 }
 
-type Selectable = typeof images[number] | typeof videos[number] | typeof tutorials[number] | typeof showroom[number]
+type Selectable = typeof images[number] | typeof videos[number] | typeof showroom[number]
 
 function cardImage(item: Selectable): string | null {
   if ('image' in item) return item.image
@@ -69,7 +62,7 @@ function cardMeta(item: Selectable): string | null {
   if ('image' in item) return `${item.year} / ${item.project}`
   if ('hero' in item) return `${item.index} / ${item.collectionLabel} / ${item.status}`
   if ('thumbnail' in item) return [item.year, item.duration].filter(Boolean).join(' / ')
-  return item.status.replace('-', ' ')
+  return null
 }
 
 function Collection<T extends Selectable>({ title, subtitle, items, onSelect }: { title: string; subtitle?: string; items: T[]; onSelect: (item: T) => void }) {
@@ -92,7 +85,7 @@ function Collection<T extends Selectable>({ title, subtitle, items, onSelect }: 
               <span className="fallback-card-copy">
                 <span>{'category' in item ? item.category : `${item.index} / ${item.collectionLabel} / ${item.status}`}</span>
                 <strong>{item.title}</strong>
-                <small>{'summary' in item ? item.summary : item.description}</small>
+                <small>{item.description}</small>
                 {meta && <span className="fallback-card-meta">{meta}</span>}
               </span>
             </button>

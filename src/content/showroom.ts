@@ -13,20 +13,6 @@ export const showroomCollections: ShowroomCollection[] = [
     label: 'Real Estate',
     subtitle: 'Architecture, lifestyle and cinematic property storytelling.',
   },
-  {
-    id: 'micro-stories',
-    label: 'Micro Stories',
-    subtitle: 'Short-form cinematic narratives with synthetic characters.',
-  },
-  {
-    id: 'original-worlds',
-    label: 'Original Worlds',
-    subtitle: 'Original animated worlds, characters and stories built with AI.',
-    emptyState: {
-      heading: 'Original animated series in development',
-      description: 'Original characters, environments and episodic storytelling exploring AI-first animation.',
-    },
-  },
 ]
 
 // These are speculative ATELIER demonstrations, never client commissions.
@@ -125,32 +111,6 @@ export const showroom: ShowroomProject[] = [
     applications: ['Property launch films', 'Sales galleries', 'Developer presentations', 'Digital signage', 'Web', 'Investor presentations', 'Social cutdowns'],
     featured: true,
     accent: '#c6a172',
-  },
-  {
-    id: 'micro-stories-001',
-    collection: 'micro-stories',
-    collectionLabel: 'Micro Stories',
-    index: '001',
-    title: "Girls' Night",
-    conceptLine: 'Three friends. One photo. One very bad idea.',
-    sector: 'Narrative / Branded Entertainment',
-    status: 'ATELIER POC',
-    hero: {
-      type: 'video',
-      thumbnail: 'portfolio/showroom/micro-stories/concept-001/thumbnail.webp',
-      youtubeId: 'tU8m1u80onE',
-      duration: '00:30',
-    },
-    watchUrl: 'https://youtu.be/tU8m1u80onE',
-    description: 'Three characters, one room and a tiny conflict. A 30-second AI-native narrative experiment focused on dialogue, acting, character continuity and cinematic direction.',
-    extendedDescription: "Three friends. One photo that should probably not be posted. A little teasing — and a very predictable pillow fight. Built as a proof of concept for AI-native narrative production, Girls' Night focuses on consistent synthetic characters, Mexican Spanish dialogue, lip sync, micro-expressions, blocking, camera direction, physical interaction and believable chemistry.",
-    territories: ['Branded Entertainment', 'Short-form Fiction', 'Character Campaigns', 'Lifestyle', 'Social Storytelling', 'Episodic Content'],
-    capabilities: ['Character continuity', 'Multi-character performance', 'Mexican Spanish dialogue', 'Lip sync', 'Micro-acting', 'Narrative blocking', 'Physical interaction', 'Prop and fabric behavior', 'Cinematic direction', 'Short-form storytelling'],
-    applications: ['Branded entertainment', 'Short-form campaigns', 'Episodic social content', 'Narrative commercials', 'Character-led campaigns', 'Teasers', 'Web', 'Social'],
-    featured: true,
-    latest: true,
-    latestType: 'story',
-    accent: '#b98278',
   },
 ]
 

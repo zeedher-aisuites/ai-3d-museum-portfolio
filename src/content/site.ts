@@ -30,9 +30,9 @@ export type Room = {
 
 export const rooms: Room[] = [
   { id: 'lobby', eyebrow: '00 / ARRIVAL', title: 'ATELIER', subtitle: 'A creative studio, AI production system and narrative lab.' },
-  { id: 'gallery', eyebrow: '01 / IMAGE', title: 'The Image Room', subtitle: 'Selected work, AI talent and commercial content systems.' },
-  { id: 'films', eyebrow: '02 / MOTION', title: 'The Moving Room', subtitle: 'Selected motion and campaign-ready content systems.' },
-  { id: 'lab', eyebrow: '03 / AI LAB', title: 'Creative AI Laboratory', subtitle: 'AI demos, production pipelines and creative infrastructure.' },
-  { id: 'showroom', eyebrow: '04 / SHOWROOM', title: 'The Afterimage', subtitle: 'Concepts, prototypes and possibilities.' },
+  { id: 'gallery', eyebrow: '01 / IMAGE', title: 'The Image Room', subtitle: 'Selected work and commercial content systems.' },
+  { id: 'films', eyebrow: '02 / MOTION', title: 'The Moving Room', subtitle: 'Films and moving-image work, streaming now.' },
+  { id: 'lab', eyebrow: '03 / AI LAB', title: 'Creative AI Laboratory', subtitle: 'Generation studies and production systems.' },
+  { id: 'showroom', eyebrow: '04 / SHOWROOM', title: 'The Afterimage', subtitle: 'Hospitality and real estate concepts, streaming now.' },
   { id: 'contact', eyebrow: '05 / CONTACT', title: 'Work with us', subtitle: 'Campaigns, ongoing content and AI production systems.' },
 ]
